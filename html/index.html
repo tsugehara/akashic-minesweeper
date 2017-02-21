@@ -130,6 +130,18 @@ window.gLocalAssetContainer["game.json"] =
 			"path": "image/start.png",
 			"width": 480,
 			"height": 200
+		},
+		"clear": {
+			"type": "image",
+			"path": "image/clear.png",
+			"width": 256,
+			"height": 256
+		},
+		"gameover": {
+			"type": "image",
+			"path": "image/gameover.png",
+			"width": 256,
+			"height": 256
 		}
 	}
 }
@@ -139,24 +151,21 @@ window.gLocalAssetContainer["main"] =
 
 function(g) {
 
-(function(exports, require, module, __filename, __dirname) {
-"use strict";
+(function(exports, require, module, __filename, __dirname) {"use strict";
 var TitleScene_1 = require("./TitleScene");
 function main(param) {
     var title = new TitleScene_1.TitleScene(g.game);
     g.game.pushScene(title);
 }
 module.exports = main;
-
-})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);
+})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);
 };
 
 window.gLocalAssetContainer["Spinner"] = 
 
 function(g) {
 
-(function(exports, require, module, __filename, __dirname) {
-"use strict";
+(function(exports, require, module, __filename, __dirname) {"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -237,16 +246,14 @@ var Spinner = (function (_super) {
     return Spinner;
 }(g.E));
 exports.Spinner = Spinner;
-
-})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);
+})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);
 };
 
 window.gLocalAssetContainer["BorderRect"] = 
 
 function(g) {
 
-(function(exports, require, module, __filename, __dirname) {
-"use strict";
+(function(exports, require, module, __filename, __dirname) {"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -273,16 +280,14 @@ var BorderRect = (function (_super) {
     return BorderRect;
 }(g.FilledRect));
 exports.BorderRect = BorderRect;
-
-})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);
+})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);
 };
 
 window.gLocalAssetContainer["MineSweeper"] = 
 
 function(g) {
 
-(function(exports, require, module, __filename, __dirname) {
-"use strict";
+(function(exports, require, module, __filename, __dirname) {"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -599,16 +604,14 @@ var CellViewer = (function (_super) {
     return CellViewer;
 }(g.E));
 exports.CellViewer = CellViewer;
-
-})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);
+})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);
 };
 
 window.gLocalAssetContainer["GameScene"] = 
 
 function(g) {
 
-(function(exports, require, module, __filename, __dirname) {
-"use strict";
+(function(exports, require, module, __filename, __dirname) {"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -636,16 +639,14 @@ var GameScene = (function (_super) {
     return GameScene;
 }(g.Scene));
 exports.GameScene = GameScene;
-
-})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);
+})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);
 };
 
 window.gLocalAssetContainer["ResultScene"] = 
 
 function(g) {
 
-(function(exports, require, module, __filename, __dirname) {
-"use strict";
+(function(exports, require, module, __filename, __dirname) {"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -653,29 +654,43 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var ResultScene = (function (_super) {
     __extends(ResultScene, _super);
-    function ResultScene(game) {
+    function ResultScene(game, isClear) {
         var _this = _super.call(this, {
-            game: game
+            game: game,
+            assetIds: ["clear", "gameover"]
         }) || this;
+        _this.isClear = isClear;
         _this.pointDownCapture.handle(_this, _this.onPointDownCapture);
+        _this.loaded.handle(_this, _this.onLoaded);
         return _this;
     }
     ResultScene.prototype.onPointDownCapture = function () {
         this.end();
     };
+    ResultScene.prototype.onLoaded = function () {
+        var assetId = this.isClear ? "clear" : "gameover";
+        var asset = this.assets[assetId];
+        new g.Sprite({
+            scene: this,
+            x: (this.game.width - asset.width) / 2,
+            y: (this.game.height - asset.height) / 2,
+            width: asset.width,
+            height: asset.height,
+            src: asset,
+            parent: this
+        });
+    };
     return ResultScene;
 }(g.Scene));
 exports.ResultScene = ResultScene;
-
-})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);
+})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);
 };
 
 window.gLocalAssetContainer["TitleScene"] = 
 
 function(g) {
 
-(function(exports, require, module, __filename, __dirname) {
-"use strict";
+(function(exports, require, module, __filename, __dirname) {"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -736,7 +751,7 @@ var TitleScene = (function (_super) {
         });
         gameScene.gameStateChanged.handle(function (state) {
             if (state === MineSweeper_1.GameState.GameClear || state === MineSweeper_1.GameState.GameOver) {
-                var resultScene = new ResultScene_1.ResultScene(_this.game);
+                var resultScene = new ResultScene_1.ResultScene(_this.game, state === MineSweeper_1.GameState.GameClear);
                 _this.game.replaceScene(resultScene);
             }
         });
@@ -745,8 +760,7 @@ var TitleScene = (function (_super) {
     return TitleScene;
 }(g.Scene));
 exports.TitleScene = TitleScene;
-
-})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);
+})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);
 };
 
 window.gLocalAssetContainer["glyph"] = 
@@ -808,39 +822,6 @@ window.gLocalAssetContainer["glyph"] =
 
 </script>
 <script type="text/javascript" src="./js/sandbox.js"></script>
-<script type="text/javascript">
-window.addEventListener("load", function() {
-    var props = window.sandboxDeveloperProps;
-    var gdr = window.sandboxDeveloperProps.gdr;
-    function changeDriverState(arg, callback) {
-        props.driver.changeState(arg, function (err) {
-            if (err) {
-                console.log(err);
-            }
-            if (callback) {
-                callback(err);
-            }
-        });
-    }
-    window.test = function() {
-        window.sandboxDeveloperProps.driver.changeState({
-            driverConfiguration: {
-                executionMode: gdr.ExecutionMode.Active
-            },
-            loopConfiguration: {
-                playbackRate: 1,  // 実行速度もリセットしておく
-                loopMode: gdr.LoopMode.Realtime,
-                delayIgnoreThreshold: 6,
-                jumpTryThreshold: 90000
-            }
-        });
-    }
-    window.test2 = function() {
-        console.log(window.sandboxDeveloperProps.amflowClient._ticks);
-    }
-});
-</script>
-<input type="button" value="テスト" onclick="test()" />
-<input type="button" value="テスト2" onclick="test2()" />
+
 </body>
 </html>

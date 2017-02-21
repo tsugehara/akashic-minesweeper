@@ -28,36 +28,6 @@ window.addEventListener("load", function() {
 				return readKeys.map(function (k, i) { return { readKey: k, values: svs[i] }; });
 			}
 		});
-		// -----------ここからアツマール用の特殊コード--------------
-		window.sandboxDeveloperProps = {
-			game: null,
-			driver: null,
-			amflow: null,
-			gameStorage: storage,
-			gameId: sandboxGameId,
-			path: gamePath,
-			gdr: gdr,
-			sandboxPlayer: sandboxPlayer
-		};
-		var startPoints = [
-			{
-				data: {
-					seed: Date.now()
-				},
-				frame: 0
-			}
-		];
-		var tickList = [
-			0,
-			0,
-			[]
-		];
-		amflowClient = new gdr.ReplayAmflowProxy({
-			amflow: amflowClient,
-			tickList: tickList,
-			startPoints: startPoints
-		});
-		// -----------ここまで--------------
 
 		var pf = new pdiBrowser.Platform({
 			amflow: amflowClient,
@@ -88,26 +58,16 @@ window.addEventListener("load", function() {
 			errorHandler: function (e) { console.log("ERRORHANDLER:", e); }
 		});
 
-		driver.gameCreatedTrigger.handle(function (game) {
-			window.sandboxDeveloperProps.game = game;
-			window.sandboxDeveloperProps.driver = driver;
-			window.sandboxDeveloperProps.amflow = amflowClient;
-		});
-
 		driver.initialize({
 			configurationUrl: "game.json",
 			assetBase: "./",
 			driverConfiguration: {
 				playId: sandboxPlayId,
 				playToken: "dummyToken",
-				// executionMode: gdr.ExecutionMode.Active
-				executionMode: gdr.ExecutionMode.Passive
+				executionMode: gdr.ExecutionMode.Active
 			},
 			loopConfiguration: {
-				// loopMode: gdr.LoopMode.Realtime
-				loopMode: gdr.LoopMode.Replay,
-				delayIgnoreThreshold: Number.MAX_VALUE,
-				jumpTryThreshold: Number.MAX_VALUE
+				loopMode: gdr.LoopMode.Realtime
 			}
 		}, function (e) {
 			if (e) {
