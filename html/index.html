@@ -1,0 +1,846 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>game</title>
+<script type="text/javascript" src="./js/akashic-engine.strip.js"></script>
+
+<script type="text/javascript" src="./js/game-driver.strip.js"></script>
+<script type="text/javascript" src="./js/pdi-browser.strip.js"></script>
+<script>
+window.g = require("@akashic/akashic-engine");
+</script>
+<script type="text/javascript" src="./js/LocalScriptAsset.js"></script>
+<script type="text/javascript" src="./js/LocalTextAsset.js"></script>
+<script type="text/javascript" src="./js/game-storage.strip.js"></script>
+<script type="text/javascript" src="./js/logger.js"></script>
+
+<style>
+* {
+	margin: 0;
+	border: 0;
+	padding: 0;
+}
+body{
+	overflow: hidden;
+	background:#eee;
+}
+
+#container canvas{
+	background-size: contain;
+}
+
+@media screen and (max-device-width: 1023px){
+	/* Smartphone 横持ち */
+	html{
+		width:480px;
+		/*margin:0 auto;*/
+	}
+	body{
+		background-color:#000;
+		width:480px;
+		/*margin:0 auto;*/
+	}
+}
+</style>
+</head>
+<body>
+<div id="container">
+</div>
+
+<script>
+
+if (! ("gLocalAssetContainer" in window)) {
+	window.gLocalAssetContainer = {};
+}
+
+window.gLocalAssetContainer["game.json"] = 
+
+`
+
+{
+	"width": 816,
+	"height": 624,
+	"fps": 30,
+	"main": "./script/main.js",
+	"assets": {
+		"main": {
+			"type": "script",
+			"path": "script/main.js",
+			"global": true
+		},
+		"Spinner": {
+			"type": "script",
+			"path": "script/Spinner.js",
+			"global": true
+		},
+		"BorderRect": {
+			"type": "script",
+			"path": "script/BorderRect.js",
+			"global": true
+		},
+		"MineSweeper": {
+			"type": "script",
+			"path": "script/MineSweeper.js",
+			"global": true
+		},
+		"GameScene": {
+			"type": "script",
+			"path": "script/GameScene.js",
+			"global": true
+		},
+		"ResultScene": {
+			"type": "script",
+			"path": "script/ResultScene.js",
+			"global": true
+		},
+		"TitleScene": {
+			"type": "script",
+			"path": "script/TitleScene.js",
+			"global": true
+		},
+		"glyph": {
+			"type": "text",
+			"path": "text/glyph.json",
+			"global": true
+		},
+		"up": {
+			"type": "image",
+			"path": "image/up.png",
+			"width": 64,
+			"height": 64,
+			"global": true
+		},
+		"down": {
+			"type": "image",
+			"path": "image/down.png",
+			"width": 64,
+			"height": 64,
+			"global": true
+		},
+		"number": {
+			"type": "image",
+			"path": "image/number.png",
+			"width": 704,
+			"height": 64,
+			"global": true
+		},
+		"start": {
+			"type": "image",
+			"path": "image/start.png",
+			"width": 480,
+			"height": 200
+		}
+	}
+}
+`;
+
+window.gLocalAssetContainer["main"] = 
+
+function(g) {
+
+(function(exports, require, module, __filename, __dirname) {
+"use strict";
+var TitleScene_1 = require("./TitleScene");
+function main(param) {
+    var title = new TitleScene_1.TitleScene(g.game);
+    g.game.pushScene(title);
+}
+module.exports = main;
+
+})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);
+};
+
+window.gLocalAssetContainer["Spinner"] = 
+
+function(g) {
+
+(function(exports, require, module, __filename, __dirname) {
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Spinner = (function (_super) {
+    __extends(Spinner, _super);
+    function Spinner(param) {
+        var _this = _super.call(this, param) || this;
+        _this.valueChanging = new g.Trigger();
+        _this.valueChanged = new g.Trigger();
+        _this.minValue = param.minValue;
+        _this.maxValue = param.maxValue;
+        _this.value = param.value;
+        // TODO: fontSize指定や型指定による自動レイアウト調整
+        // TODO: このコードはfontSize = 64, 桁数4固定
+        _this.up = (param.up ? param.up : (param.upSrc ? new g.Sprite({
+            scene: _this.scene,
+            src: param.upSrc,
+            touchable: true,
+            x: 0,
+            y: 0
+        }) : null));
+        _this.down = (param.down ? param.down : (param.downSrc ? new g.Sprite({
+            scene: _this.scene,
+            src: param.downSrc,
+            touchable: true,
+            x: 384,
+            y: 0
+        }) : null));
+        _this.font = param.font ? param.font : null;
+        _this.text = param.text ? param.text : new g.Label({
+            scene: _this.scene,
+            font: _this.font,
+            fontSize: 64,
+            text: "" + _this.value,
+            textAlign: g.TextAlign.Center,
+            widthAutoAdjust: false,
+            width: 64 * 4,
+            height: 64,
+            x: 64,
+            y: 0
+        });
+        _this.up.pointDown.handle(_this, _this.onUp);
+        _this.down.pointDown.handle(_this, _this.onDown);
+        _this.append(_this.text);
+        _this.append(_this.up);
+        _this.append(_this.down);
+        return _this;
+    }
+    Spinner.prototype.changeValue = function (value) {
+        while (value < this.minValue)
+            value = (this.maxValue + 1 - (this.minValue - value));
+        while (value > this.maxValue)
+            value = (this.minValue - 1 + (value - this.maxValue));
+        var e = {
+            target: this,
+            data: value
+        };
+        this.valueChanging.fire(e);
+        if (e.cancel)
+            return;
+        this.value = value;
+        this.valueChanged.fire(this.value);
+        this.text.text = "" + this.value;
+        this.text.invalidate();
+    };
+    Spinner.prototype.onUp = function () {
+        this.changeValue(this.value - 1);
+    };
+    Spinner.prototype.onDown = function () {
+        this.changeValue(this.value + 1);
+    };
+    // TODO: upやdownを外部からもらっちゃうと、このタイミングでついでにdestroyしてしまうな・・
+    Spinner.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+    };
+    return Spinner;
+}(g.E));
+exports.Spinner = Spinner;
+
+})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);
+};
+
+window.gLocalAssetContainer["BorderRect"] = 
+
+function(g) {
+
+(function(exports, require, module, __filename, __dirname) {
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var BorderRect = (function (_super) {
+    __extends(BorderRect, _super);
+    function BorderRect(param) {
+        var _this = _super.call(this, param) || this;
+        _this.borderColor = param.borderColor ? param.borderColor : null;
+        _this.borderWidth = param.borderWidth ? param.borderWidth : 1;
+        return _this;
+    }
+    BorderRect.prototype.renderSelf = function (renderer) {
+        if (this.borderColor) {
+            renderer.fillRect(0, 0, this.width, this.height, this.borderColor);
+            renderer.fillRect(this.borderWidth, this.borderWidth, this.width - this.borderWidth * 2, this.height - this.borderWidth * 2, this.cssColor);
+        }
+        else {
+            _super.prototype.renderSelf.call(this, renderer);
+        }
+        return false;
+    };
+    return BorderRect;
+}(g.FilledRect));
+exports.BorderRect = BorderRect;
+
+})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);
+};
+
+window.gLocalAssetContainer["MineSweeper"] = 
+
+function(g) {
+
+(function(exports, require, module, __filename, __dirname) {
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var BorderRect_1 = require("./BorderRect");
+var gameFontSize = 24;
+var gameFont = new g.DynamicFont(g.FontFamily.SansSerif, gameFontSize, g.game);
+var GameState;
+(function (GameState) {
+    GameState[GameState["Play"] = 0] = "Play";
+    GameState[GameState["GameOver"] = 1] = "GameOver";
+    GameState[GameState["GameClear"] = 2] = "GameClear";
+})(GameState = exports.GameState || (exports.GameState = {}));
+var Cell = (function () {
+    function Cell(x, y) {
+        this.x = x;
+        this.y = y;
+        this.mine = false;
+        this.mineCount = 0;
+        this.state = State.Hidden;
+        this.bombed = new g.Trigger();
+        this.cleared = new g.Trigger();
+    }
+    Cell.prototype.bomb = function () {
+        if (!this.mine) {
+            throw new Error("invalid state!");
+        }
+        this.bombed.fire(this);
+    };
+    Cell.prototype.clear = function () {
+        if (this.mine) {
+            throw new Error("invalid state!!");
+        }
+        this.cleared.fire(this);
+    };
+    return Cell;
+}());
+exports.Cell = Cell;
+var State;
+(function (State) {
+    State[State["Unknown"] = 0] = "Unknown";
+    State[State["Hidden"] = 1] = "Hidden";
+    State[State["Clear"] = 2] = "Clear";
+    State[State["Bomb"] = 3] = "Bomb";
+    State[State["BombHere"] = 4] = "BombHere";
+    State[State["Flag"] = 5] = "Flag";
+})(State = exports.State || (exports.State = {}));
+var MineSweeper = (function () {
+    function MineSweeper(config, scene) {
+        this.gameState = GameState.Play;
+        this.gameStateChanged = new g.Trigger();
+        this.gameField = new g.Pane({
+            scene: scene,
+            x: 0,
+            y: 20,
+            width: g.game.width - 20,
+            height: g.game.height - 20
+        });
+        scene.append(this.gameField);
+        this.random = new g.XorshiftRandomGenerator(config.seed);
+        this.scene = scene;
+        this.config = config;
+        this.field = [];
+        for (var x = 0; x < config.width; x++) {
+            this.field[x] = [];
+            for (var y = 0; y < config.height; y++) {
+                this.field[x][y] = new Cell(x, y);
+                this.field[x][y].bombed.handle(this, this.onBombed);
+                this.field[x][y].cleared.handle(this, this.onCleared);
+            }
+        }
+        this.setupField(this.gameField);
+        this.setMines();
+    }
+    MineSweeper.prototype.onBombed = function (cell) {
+        if (this.gameState !== GameState.Play)
+            return;
+        cell.state = State.BombHere;
+        for (var x = 0; x < this.field.length; x++) {
+            for (var y = 0; y < this.field[x].length; y++) {
+                if (this.field[x][y].mine) {
+                    this.field[x][y].state = this.field[x][y].state === State.BombHere ? State.BombHere : State.Bomb;
+                    this.field[x][y].view.updateByState();
+                }
+            }
+        }
+        this.gameState = GameState.GameOver;
+        this.gameStateChanged.fire(this.gameState);
+    };
+    MineSweeper.prototype.onCleared = function (cell) {
+        var _this = this;
+        if (this.gameState !== GameState.Play)
+            return;
+        var p = function (x, y) {
+            if (x < 0)
+                return;
+            if (x > _this.field.length - 1)
+                return;
+            if (y < 0)
+                return;
+            if (y > _this.field[x].length - 1)
+                return;
+            var c = _this.field[x][y];
+            if (c.state !== State.Hidden && c.state !== State.Flag)
+                return;
+            c.state = State.Clear;
+            c.view.updateByState();
+            if (c.mineCount > 0)
+                return;
+            p(x - 1, y);
+            p(x + 1, y);
+            p(x, y - 1);
+            p(x, y + 1);
+            p(x - 1, y - 1);
+            p(x - 1, y + 1);
+            p(x + 1, y - 1);
+            p(x + 1, y + 1);
+        };
+        cell.state = State.Clear;
+        cell.view.updateByState();
+        if (cell.mineCount > 0) {
+            this.clearGame();
+            return;
+        }
+        p(cell.x + 1, cell.y);
+        p(cell.x - 1, cell.y);
+        p(cell.x, cell.y + 1);
+        p(cell.x, cell.y - 1);
+        p(cell.x + 1, cell.y - 1);
+        p(cell.x + 1, cell.y + 1);
+        p(cell.x - 1, cell.y - 1);
+        p(cell.x - 1, cell.y + 1);
+        this.clearGame();
+    };
+    MineSweeper.prototype.clearGame = function () {
+        for (var x = 0; x < this.field.length; x++) {
+            for (var y = 0; y < this.field[x].length; y++) {
+                if ((!this.field[x][y].mine) && (this.field[x][y].state !== State.Clear))
+                    return false;
+            }
+        }
+        for (var x = 0; x < this.field.length; x++) {
+            for (var y = 0; y < this.field[x].length; y++) {
+                if (this.field[x][y].mine) {
+                    this.field[x][y].state = State.Bomb;
+                    this.field[x][y].view.updateByState();
+                }
+            }
+        }
+        this.gameState = GameState.GameClear;
+        this.gameStateChanged.fire(this.gameState);
+        return true;
+    };
+    MineSweeper.prototype.setMines = function () {
+        for (var i = 0; i < this.config.mine; i++) {
+            do {
+                var x = this.random.get(0, this.field.length - 1);
+                var y = this.random.get(0, this.field[x].length - 1);
+                if (!this.field[x][y].mine) {
+                    this.field[x][y].mine = true;
+                    break;
+                }
+            } while (true);
+        }
+        for (var x = 0; x < this.field.length; x++) {
+            for (var y = 0; y < this.field[x].length; y++) {
+                this.field[x][y].mineCount = this.calculateMineCount(x, y);
+            }
+        }
+    };
+    MineSweeper.prototype.getWidth = function (parent) {
+        if (parent instanceof g.Scene) {
+            return parent.game.width;
+        }
+        return parent.width;
+    };
+    MineSweeper.prototype.getHeight = function (parent) {
+        if (parent instanceof g.Scene) {
+            return parent.game.height;
+        }
+        return parent.height;
+    };
+    MineSweeper.prototype.setupField = function (parent) {
+        var w = this.getWidth(parent) / this.field.length | 0;
+        var h = this.getHeight(parent) / this.field[0].length | 0;
+        for (var x = 0; x < this.field.length; x++) {
+            for (var y = 0; y < this.field[x].length; y++) {
+                var view = new CellViewer(this.field[x][y], this.scene, x, y, w, h);
+                view.x = x * w;
+                view.y = y * h;
+                parent.append(view);
+                view.modified();
+                this.field[x][y].view = view;
+            }
+        }
+    };
+    MineSweeper.prototype.calculateMineCount = function (centerX, centerY) {
+        var _this = this;
+        var xs = [];
+        var ys = [];
+        xs.push(centerX);
+        if (centerX > 0)
+            xs.push(centerX - 1);
+        if (centerX < this.field.length - 1)
+            xs.push(centerX + 1);
+        ys.push(centerY);
+        if (centerY > 0)
+            ys.push(centerY - 1);
+        if (centerY < this.field[centerY].length - 1)
+            ys.push(centerY + 1);
+        return xs.reduce(function (px, cx) {
+            return px + ys.reduce(function (py, cy) {
+                if (cx === centerX && cy === centerY)
+                    return py;
+                return py + (_this.field[cx][cy].mine ? 1 : 0);
+            }, 0);
+        }, 0);
+    };
+    return MineSweeper;
+}());
+exports.MineSweeper = MineSweeper;
+var CellViewer = (function (_super) {
+    __extends(CellViewer, _super);
+    function CellViewer(cell, scene, x, y, width, height) {
+        var _this = _super.call(this, {
+            scene: scene,
+            width: width,
+            height: height
+        }) || this;
+        _this.cell = cell;
+        _this.bg = new BorderRect_1.BorderRect({
+            scene: scene,
+            x: 0,
+            y: 0,
+            width: width,
+            height: height,
+            // デバッグ用: cssColor: field[x][y].mine ? "#000000" : "#aaaaaa",
+            cssColor: "#aaaaaa",
+            borderWidth: 1,
+            borderColor: "#ff0000",
+            touchable: true,
+            parent: _this
+        });
+        _this.bg.pointDown.handle(_this, _this.onPointDown);
+        _this.text = new g.Label({
+            scene: scene,
+            x: 0,
+            y: 0,
+            width: width,
+            height: (height - gameFontSize) / 2 | 0,
+            font: gameFont,
+            fontSize: gameFontSize,
+            textAlign: g.TextAlign.Center,
+            text: "",
+            textColor: "#0000ff",
+            parent: _this
+        });
+        return _this;
+    }
+    CellViewer.prototype.onPointDown = function (e) {
+        if (this.cell.mine) {
+            this.cell.bomb();
+        }
+        else {
+            this.cell.clear();
+        }
+    };
+    CellViewer.prototype.modified = function (isBubbling) {
+        _super.prototype.modified.call(this, isBubbling);
+        if (this.bg && this.text)
+            this.updateByState();
+    };
+    CellViewer.prototype.updateByState = function () {
+        switch (this.cell.state) {
+            case State.Bomb:
+                this.bg.cssColor = "#000000";
+                this.bg.modified();
+                if (this.text.text !== "") {
+                    this.text.text = "";
+                    this.text.invalidate();
+                }
+                break;
+            case State.BombHere:
+                this.bg.cssColor = "#ff0000";
+                this.bg.modified();
+                if (this.text.text !== "") {
+                    this.text.text = "";
+                    this.text.invalidate();
+                }
+                break;
+            case State.Clear:
+                this.bg.cssColor = "#ffffff";
+                this.bg.modified();
+                this.text.text = "" + this.cell.mineCount;
+                this.text.invalidate();
+                break;
+            case State.Flag:
+                this.text.text = "旗";
+                this.text.invalidate();
+                break;
+            case State.Hidden:
+                this.bg.cssColor = "#aaaaaa";
+                this.bg.modified();
+                if (this.text.text !== "") {
+                    this.text.text = "";
+                    this.text.invalidate();
+                }
+                break;
+            default:
+                throw new Error("invalid cell state");
+        }
+    };
+    return CellViewer;
+}(g.E));
+exports.CellViewer = CellViewer;
+
+})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);
+};
+
+window.gLocalAssetContainer["GameScene"] = 
+
+function(g) {
+
+(function(exports, require, module, __filename, __dirname) {
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var m = require("./MineSweeper");
+var GameScene = (function (_super) {
+    __extends(GameScene, _super);
+    function GameScene(param, config) {
+        var _this = _super.call(this, param) || this;
+        _this.config = config ? config : {
+            width: 10,
+            height: 10,
+            mine: 10,
+            seed: 0
+        };
+        _this.gameStateChanged = new g.Trigger();
+        _this.mineSweeper = new m.MineSweeper(config, _this);
+        _this.mineSweeper.gameStateChanged.handle(_this, _this.onGameStateChanged);
+        return _this;
+    }
+    GameScene.prototype.onGameStateChanged = function (state) {
+        this.gameStateChanged.fire(state);
+    };
+    return GameScene;
+}(g.Scene));
+exports.GameScene = GameScene;
+
+})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);
+};
+
+window.gLocalAssetContainer["ResultScene"] = 
+
+function(g) {
+
+(function(exports, require, module, __filename, __dirname) {
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var ResultScene = (function (_super) {
+    __extends(ResultScene, _super);
+    function ResultScene(game) {
+        var _this = _super.call(this, {
+            game: game
+        }) || this;
+        _this.pointDownCapture.handle(_this, _this.onPointDownCapture);
+        return _this;
+    }
+    ResultScene.prototype.onPointDownCapture = function () {
+        this.end();
+    };
+    return ResultScene;
+}(g.Scene));
+exports.ResultScene = ResultScene;
+
+})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);
+};
+
+window.gLocalAssetContainer["TitleScene"] = 
+
+function(g) {
+
+(function(exports, require, module, __filename, __dirname) {
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Spinner_1 = require("./Spinner");
+var GameScene_1 = require("./GameScene");
+var ResultScene_1 = require("./ResultScene");
+var MineSweeper_1 = require("./MineSweeper");
+// なぜかこれがシーン遷移を全部知ってるクラスになってる
+var TitleScene = (function (_super) {
+    __extends(TitleScene, _super);
+    function TitleScene(game) {
+        var _this = _super.call(this, {
+            game: game,
+            assetIds: ["start"]
+        }) || this;
+        var glyphData = JSON.parse(_this.game.assets["glyph"].data);
+        _this.font = new g.BitmapFont(_this.game.assets["number"], glyphData.map, glyphData.width, glyphData.height, glyphData.missingGlyph);
+        _this.spinner = null;
+        _this.start = null;
+        _this.loaded.handle(_this, _this.onLoaded);
+        return _this;
+    }
+    TitleScene.prototype.onLoaded = function () {
+        var startImage = this.assets["start"];
+        this.start = new g.Sprite({
+            scene: this,
+            src: startImage,
+            x: this.game.width / 2 - startImage.width / 2,
+            y: this.game.height - startImage.height - 32,
+            touchable: true
+        });
+        this.start.pointDown.handle(this, this.onStart);
+        this.spinner = new Spinner_1.Spinner({
+            scene: this,
+            font: this.font,
+            upSrc: this.game.assets["up"],
+            downSrc: this.game.assets["down"],
+            value: 0,
+            minValue: 0,
+            maxValue: 9,
+            x: this.game.width / 2 - (64 * 6 / 2),
+            y: 20
+        });
+        this.append(this.spinner);
+        this.append(this.start);
+    };
+    TitleScene.prototype.onStart = function () {
+        var _this = this;
+        var gameScene = new GameScene_1.GameScene({
+            game: this.game
+        }, {
+            width: 10,
+            height: 10,
+            mine: 10,
+            seed: this.spinner.value
+        });
+        gameScene.gameStateChanged.handle(function (state) {
+            if (state === MineSweeper_1.GameState.GameClear || state === MineSweeper_1.GameState.GameOver) {
+                var resultScene = new ResultScene_1.ResultScene(_this.game);
+                _this.game.replaceScene(resultScene);
+            }
+        });
+        this.game.pushScene(gameScene);
+    };
+    return TitleScene;
+}(g.Scene));
+exports.TitleScene = TitleScene;
+
+})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);
+};
+
+window.gLocalAssetContainer["glyph"] = 
+
+`
+
+{
+	"map":{
+		"48":{
+			"x":0,
+			"y":0
+		},
+		"49":{
+			"x":64,
+			"y":0
+		},
+		"50":{
+			"x":128,
+			"y":0
+		},
+		"51":{
+			"x":192,
+			"y":0
+		},
+		"52":{
+			"x":256,
+			"y":0
+		},
+		"53":{
+			"x":320,
+			"y":0
+		},
+		"54":{
+			"x":384,
+			"y":0
+		},
+		"55":{
+			"x":448,
+			"y":0
+		},
+		"56":{
+			"x":512,
+			"y":0
+		},
+		"57":{
+			"x":576,
+			"y":0
+		}
+	},
+	"missingGlyph":{
+		"x":640,
+		"y":0
+	},
+	"width":64,
+	"height":64
+}
+`;
+
+
+</script>
+<script type="text/javascript" src="./js/sandbox.js"></script>
+<script type="text/javascript">
+window.addEventListener("load", function() {
+    var props = window.sandboxDeveloperProps;
+    var gdr = window.sandboxDeveloperProps.gdr;
+    function changeDriverState(arg, callback) {
+        props.driver.changeState(arg, function (err) {
+            if (err) {
+                console.log(err);
+            }
+            if (callback) {
+                callback(err);
+            }
+        });
+    }
+    window.test = function() {
+        window.sandboxDeveloperProps.driver.changeState({
+            driverConfiguration: {
+                executionMode: gdr.ExecutionMode.Active
+            },
+            loopConfiguration: {
+                playbackRate: 1,  // 実行速度もリセットしておく
+                loopMode: gdr.LoopMode.Realtime,
+                delayIgnoreThreshold: 6,
+                jumpTryThreshold: 90000
+            }
+        });
+    }
+    window.test2 = function() {
+        console.log(window.sandboxDeveloperProps.amflowClient._ticks);
+    }
+});
+</script>
+<input type="button" value="テスト" onclick="test()" />
+<input type="button" value="テスト2" onclick="test2()" />
+</body>
+</html>

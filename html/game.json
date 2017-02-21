@@ -1,0 +1,87 @@
+{
+	"width": 816,
+	"height": 624,
+	"fps": 30,
+	"main": "./script/main.js",
+	"assets": {
+		"main": {
+			"type": "script",
+			"path": "script/main.js",
+			"global": true
+		},
+		"Spinner": {
+			"type": "script",
+			"path": "script/Spinner.js",
+			"global": true
+		},
+		"BorderRect": {
+			"type": "script",
+			"path": "script/BorderRect.js",
+			"global": true
+		},
+		"MineSweeper": {
+			"type": "script",
+			"path": "script/MineSweeper.js",
+			"global": true
+		},
+		"GameScene": {
+			"type": "script",
+			"path": "script/GameScene.js",
+			"global": true
+		},
+		"ResultScene": {
+			"type": "script",
+			"path": "script/ResultScene.js",
+			"global": true
+		},
+		"TitleScene": {
+			"type": "script",
+			"path": "script/TitleScene.js",
+			"global": true
+		},
+		"glyph": {
+			"type": "text",
+			"path": "text/glyph.json",
+			"global": true
+		},
+		"up": {
+			"type": "image",
+			"path": "image/up.png",
+			"width": 64,
+			"height": 64,
+			"global": true
+		},
+		"down": {
+			"type": "image",
+			"path": "image/down.png",
+			"width": 64,
+			"height": 64,
+			"global": true
+		},
+		"number": {
+			"type": "image",
+			"path": "image/number.png",
+			"width": 704,
+			"height": 64,
+			"global": true
+		},
+		"start": {
+			"type": "image",
+			"path": "image/start.png",
+			"width": 480,
+			"height": 200
+		},
+		"clear": {
+			"type": "image",
+			"path": "image/clear.png",
+			"width": 256,
+			"height": 256
+		},
+		"gameover": {
+			"type": "image",
+			"path": "image/gameover.png",
+			"width": 256,
+			"height": 256
+		}
+	}
+}
