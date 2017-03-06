@@ -14,11 +14,17 @@ export class GameScene extends g.Scene {
 			seed: 0
 		};
 		this.gameStateChanged = new g.Trigger();
-		this.mineSweeper = new m.MineSweeper(config, this);
-		this.mineSweeper.gameStateChanged.handle(this, this.onGameStateChanged);
+		this.mineSweeper = null;
+		this.loaded.handle(this, this.onLoaded);
 	}
 
 	onGameStateChanged(state: m.GameState) {
 		this.gameStateChanged.fire(state);
+	}
+
+	onLoaded() {
+		this.mineSweeper = new m.MineSweeper(this.config, this);
+		this.mineSweeper.gameStateChanged.handle(this, this.onGameStateChanged);
+		return false;
 	}
 }

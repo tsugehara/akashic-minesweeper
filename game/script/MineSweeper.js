@@ -1,10 +1,16 @@
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var BorderRect_1 = require("./BorderRect");
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var Cell_1 = require("./Cell");
 var gameFontSize = 24;
 var gameFont = new g.DynamicFont(g.FontFamily.SansSerif, gameFontSize, g.game);
 var GameState;
@@ -54,9 +60,9 @@ var MineSweeper = (function () {
         this.gameField = new g.Pane({
             scene: scene,
             x: 0,
-            y: 20,
-            width: g.game.width - 20,
-            height: g.game.height - 20
+            y: 0,
+            width: g.game.width,
+            height: g.game.height
         });
         scene.append(this.gameField);
         this.random = new g.XorshiftRandomGenerator(config.seed);
@@ -81,8 +87,8 @@ var MineSweeper = (function () {
         for (var x = 0; x < this.field.length; x++) {
             for (var y = 0; y < this.field[x].length; y++) {
                 if (this.field[x][y].mine) {
-                    this.field[x][y].state = this.field[x][y].state === State.BombHere ? State.BombHere : State.Bomb;
-                    this.field[x][y].view.updateByState();
+                    // this.field[x][y].state = this.field[x][y].state === State.BombHere ? State.BombHere : State.Bomb;
+                    // this.field[x][y].view.updateByState();
                 }
             }
         }
@@ -167,6 +173,7 @@ var MineSweeper = (function () {
         for (var x = 0; x < this.field.length; x++) {
             for (var y = 0; y < this.field[x].length; y++) {
                 this.field[x][y].mineCount = this.calculateMineCount(x, y);
+                this.field[x][y].view.view.changeValue(this.field[x][y].mineCount); // TODO: きもい
             }
         }
     };
@@ -230,33 +237,20 @@ var CellViewer = (function (_super) {
             height: height
         }) || this;
         _this.cell = cell;
-        _this.bg = new BorderRect_1.BorderRect({
+        _this.view = new Cell_1.CellView({
             scene: scene,
             x: 0,
             y: 0,
             width: width,
             height: height,
-            // デバッグ用: cssColor: field[x][y].mine ? "#000000" : "#aaaaaa",
-            cssColor: "#aaaaaa",
-            borderWidth: 1,
-            borderColor: "#ff0000",
-            touchable: true,
-            parent: _this
-        });
-        _this.bg.pointDown.handle(_this, _this.onPointDown);
-        _this.text = new g.Label({
-            scene: scene,
-            x: 0,
-            y: 0,
-            width: width,
-            height: (height - gameFontSize) / 2 | 0,
             font: gameFont,
-            fontSize: gameFontSize,
-            textAlign: g.TextAlign.Center,
-            text: "",
-            textColor: "#0000ff",
+            touchable: true,
+            openBg: scene.assets["open_cell"].asSurface(),
+            closeBg: scene.assets["close_cell"].asSurface(),
+            value: cell.mineCount,
             parent: _this
         });
+        _this.view.pointDown.handle(_this, _this.onPointDown);
         return _this;
     }
     CellViewer.prototype.onPointDown = function (e) {
@@ -269,44 +263,56 @@ var CellViewer = (function (_super) {
     };
     CellViewer.prototype.modified = function (isBubbling) {
         _super.prototype.modified.call(this, isBubbling);
-        if (this.bg && this.text)
+        if (this.view)
             this.updateByState();
     };
     CellViewer.prototype.updateByState = function () {
         switch (this.cell.state) {
             case State.Bomb:
+                this.view.open();
+                /*
                 this.bg.cssColor = "#000000";
                 this.bg.modified();
                 if (this.text.text !== "") {
                     this.text.text = "";
                     this.text.invalidate();
                 }
+                */
                 break;
             case State.BombHere:
+                this.view.open();
+                /*
                 this.bg.cssColor = "#ff0000";
                 this.bg.modified();
                 if (this.text.text !== "") {
                     this.text.text = "";
                     this.text.invalidate();
                 }
+                */
                 break;
             case State.Clear:
+                this.view.open();
+                /*
                 this.bg.cssColor = "#ffffff";
                 this.bg.modified();
                 this.text.text = "" + this.cell.mineCount;
                 this.text.invalidate();
+                */
                 break;
             case State.Flag:
-                this.text.text = "旗";
-                this.text.invalidate();
+                // this.text.text = "旗";
+                // this.text.invalidate();
                 break;
             case State.Hidden:
+                this.view.close();
+                /*
                 this.bg.cssColor = "#aaaaaa";
                 this.bg.modified();
                 if (this.text.text !== "") {
                     this.text.text = "";
                     this.text.invalidate();
                 }
+                */
                 break;
             default:
                 throw new Error("invalid cell state");

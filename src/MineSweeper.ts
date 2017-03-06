@@ -1,4 +1,5 @@
 import {BorderRect, BorderRectParameterObject} from "./BorderRect";
+import {CellView, CellViewParameterObject} from "./Cell";
 
 const gameFontSize = 24;
 const gameFont = new g.DynamicFont(g.FontFamily.SansSerif, gameFontSize, g.game);
@@ -76,9 +77,9 @@ export class MineSweeper {
 		this.gameField = new g.Pane({
 			scene: scene,
 			x: 0,
-			y: 20,
-			width: g.game.width - 20,
-			height: g.game.height - 20
+			y: 0,
+			width: g.game.width,
+			height: g.game.height
 		});
 		scene.append(this.gameField);
 		this.random = new g.XorshiftRandomGenerator(config.seed);
@@ -105,8 +106,8 @@ export class MineSweeper {
 		for (let x = 0; x < this.field.length; x++) {
 			for (let y = 0; y < this.field[x].length; y++) {
 				if (this.field[x][y].mine) {
-					this.field[x][y].state = this.field[x][y].state === State.BombHere ? State.BombHere : State.Bomb;
-					this.field[x][y].view.updateByState();
+					// this.field[x][y].state = this.field[x][y].state === State.BombHere ? State.BombHere : State.Bomb;
+					// this.field[x][y].view.updateByState();
 				}
 			}
 		}
@@ -192,6 +193,7 @@ export class MineSweeper {
 		for (let x = 0; x < this.field.length; x++) {
 			for (let y = 0; y < this.field[x].length; y++) {
 				this.field[x][y].mineCount = this.calculateMineCount(x, y);
+				this.field[x][y].view.view.changeValue(this.field[x][y].mineCount);	// TODO: きもい
 			}
 		}
 	}
@@ -246,8 +248,7 @@ export class MineSweeper {
 
 export class CellViewer extends g.E {
 	cell: Cell;
-	bg: BorderRect;
-	text: g.Label;
+	view: CellView;
 
 	constructor(cell: Cell, scene: g.Scene, x: number, y: number, width: number, height: number) {
 		super({
@@ -256,33 +257,20 @@ export class CellViewer extends g.E {
 			height: height
 		});
 		this.cell = cell;
-		this.bg = new BorderRect({
+		this.view = new CellView({
 			scene: scene,
 			x: 0,
 			y: 0,
 			width: width,
 			height: height,
-			// デバッグ用: cssColor: field[x][y].mine ? "#000000" : "#aaaaaa",
-			cssColor: "#aaaaaa",
-			borderWidth: 1,
-			borderColor: "#ff0000",
-			touchable: true,
-			parent: this
-		});
-		this.bg.pointDown.handle(this, this.onPointDown);
-		this.text = new g.Label({
-			scene: scene,
-			x: 0,
-			y: 0,
-			width: width,
-			height: (height - gameFontSize) / 2 | 0,
 			font: gameFont,
-			fontSize: gameFontSize,
-			textAlign: g.TextAlign.Center,
-			text: "",
-			textColor: "#0000ff",
+			touchable: true,
+			openBg: (scene.assets["open_cell"] as g.ImageAsset).asSurface(),
+			closeBg: (scene.assets["close_cell"] as g.ImageAsset).asSurface(),
+			value: cell.mineCount,
 			parent: this
 		});
+		this.view.pointDown.handle(this, this.onPointDown);
 	}
 
 	onPointDown(e: g.PointDownEvent) {
@@ -295,44 +283,56 @@ export class CellViewer extends g.E {
 
 	modified(isBubbling?: boolean) {
 		super.modified(isBubbling);
-		if (this.bg && this.text) this.updateByState();
+		if (this.view) this.updateByState();
 	}
 
 	updateByState() {
 		switch (this.cell.state) {
 			case State.Bomb:
+				this.view.open();
+				/*
 				this.bg.cssColor = "#000000";
 				this.bg.modified();
 				if (this.text.text !== "") {
 					this.text.text = "";
 					this.text.invalidate();
 				}
+				*/
 			break;
 			case State.BombHere:
+				this.view.open();
+				/*
 				this.bg.cssColor = "#ff0000";
 				this.bg.modified();
 				if (this.text.text !== "") {
 					this.text.text = "";
 					this.text.invalidate();
 				}
+				*/
 			break;
 			case State.Clear:
+				this.view.open();
+				/*
 				this.bg.cssColor = "#ffffff";
 				this.bg.modified();
 				this.text.text = "" + this.cell.mineCount;
 				this.text.invalidate();
+				*/
 			break;
 			case State.Flag:
-				this.text.text = "旗";
-				this.text.invalidate();
+				// this.text.text = "旗";
+				// this.text.invalidate();
 			break;
 			case State.Hidden:
+				this.view.close();
+				/*
 				this.bg.cssColor = "#aaaaaa";
 				this.bg.modified();
 				if (this.text.text !== "") {
 					this.text.text = "";
 					this.text.invalidate();
 				}
+				*/
 			break;
 			default:
 				throw new Error("invalid cell state");
