@@ -20,12 +20,18 @@ var TitleScene = (function (_super) {
     function TitleScene(game) {
         var _this = _super.call(this, {
             game: game,
-            assetIds: ["start", "start_on", "title"]
+            assetIds: ["start", "start_on", "title", "open_cell", "close_cell"]
         }) || this;
         var glyphData = JSON.parse(_this.game.assets["stage_glyph"].data);
         _this.font = new g.BitmapFont(_this.game.assets["stage_number"], glyphData.map, glyphData.width, glyphData.height, glyphData.missingGlyph);
         _this.spinner = null;
         _this.start = null;
+        _this.config = {
+            width: 10,
+            height: 10,
+            mine: 10,
+            seed: 0
+        };
         _this.loaded.handle(_this, _this.onLoaded);
         return _this;
     }
@@ -58,9 +64,27 @@ var TitleScene = (function (_super) {
             x: this.game.width / 2 - (64 * 6 / 2),
             y: 20
         });
+        this.createBg();
         this.append(this.spinner);
         this.append(this.title);
         this.append(this.start);
+    };
+    TitleScene.prototype.createBg = function () {
+        var w = this.game.width / this.config.width | 0;
+        var h = this.game.height / this.config.height | 0;
+        for (var x = 0; x < this.config.width; x++) {
+            for (var y = 0; y < this.config.height; y++) {
+                new g.Sprite({
+                    scene: this,
+                    parent: this,
+                    src: this.assets["close_cell"],
+                    x: x * w,
+                    y: y * h,
+                    width: w,
+                    height: h
+                });
+            }
+        }
     };
     TitleScene.prototype.onStarting = function () {
         this.start.surface = this.assets["start_on"].asSurface();
@@ -68,12 +92,8 @@ var TitleScene = (function (_super) {
     };
     TitleScene.prototype.onStart = function () {
         var _this = this;
-        var gameScene = new GameScene_1.GameScene(this.game, {
-            width: 10,
-            height: 10,
-            mine: 10,
-            seed: this.spinner.value
-        });
+        this.config.seed = this.spinner.value;
+        var gameScene = new GameScene_1.GameScene(this.game, this.config);
         gameScene.gameStateChanged.handle(function (state) {
             if (state === MineSweeper_1.GameState.GameClear || state === MineSweeper_1.GameState.GameOver) {
                 var resultScene = new ResultScene_1.ResultScene(_this.game, state === MineSweeper_1.GameState.GameClear, gameScene);
