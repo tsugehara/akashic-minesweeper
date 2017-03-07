@@ -104,13 +104,15 @@
 			"type": "image",
 			"path": "image/clear.png",
 			"width": 590,
-			"height": 390
+			"height": 390,
+			"global": true
 		},
 		"gameover": {
 			"type": "image",
 			"path": "image/gameover.png",
 			"width": 590,
-			"height": 390
+			"height": 390,
+			"global": true
 		},
 		"open_cell": {
 			"type": "image",

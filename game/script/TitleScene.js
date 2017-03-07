@@ -63,15 +63,12 @@ var TitleScene = (function (_super) {
         this.append(this.start);
     };
     TitleScene.prototype.onStarting = function () {
-        this.start.surface = this.assets["start"].asSurface();
+        this.start.surface = this.assets["start_on"].asSurface();
         this.start.invalidate();
     };
     TitleScene.prototype.onStart = function () {
         var _this = this;
-        var gameScene = new GameScene_1.GameScene({
-            game: this.game,
-            assetIds: ["open_cell", "close_cell"]
-        }, {
+        var gameScene = new GameScene_1.GameScene(this.game, {
             width: 10,
             height: 10,
             mine: 10,

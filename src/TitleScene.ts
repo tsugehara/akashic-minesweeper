@@ -65,15 +65,12 @@ export class TitleScene extends g.Scene {
 	}
 
 	onStarting() {
-		(<g.Sprite>this.start).surface = (<g.ImageAsset>this.assets["start"]).asSurface();
+		(<g.Sprite>this.start).surface = (<g.ImageAsset>this.assets["start_on"]).asSurface();
 		(<g.Sprite>this.start).invalidate();
 	}
 
 	onStart() {
-		const gameScene = new GameScene({
-			game: this.game,
-			assetIds: ["open_cell", "close_cell"]
-		}, {
+		const gameScene = new GameScene(this.game, {
 			width: 10,
 			height: 10,
 			mine: 10,

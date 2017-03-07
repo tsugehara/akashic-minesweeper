@@ -4,8 +4,7 @@ export class ResultScene extends g.Scene {
 	gameSprite: g.Sprite;
 	constructor(game: g.Game, isClear: boolean, gameScene: GameScene) {
 		super({
-			game: game,
-			assetIds: ["clear", "gameover"]
+			game: game
 		});
 		this.gameSprite = g.Util.createSpriteFromScene(this, gameScene);
 		this.isClear = isClear;
@@ -19,7 +18,7 @@ export class ResultScene extends g.Scene {
 
 	onLoaded() {
 		const assetId = this.isClear ? "clear" : "gameover";
-		const asset = <g.ImageAsset>this.assets[assetId];
+		const asset = <g.ImageAsset>this.game.assets[assetId];
 		this.append(this.gameSprite);
 		new g.Sprite({
 			scene: this,

@@ -13,8 +13,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var m = require("./MineSweeper");
 var GameScene = (function (_super) {
     __extends(GameScene, _super);
-    function GameScene(param, config) {
-        var _this = _super.call(this, param) || this;
+    function GameScene(game, config) {
+        var _this = _super.call(this, {
+            game: game,
+            assetIds: ["open_cell", "close_cell"]
+        }) || this;
         _this.config = config ? config : {
             width: 10,
             height: 10,

@@ -14,8 +14,7 @@ var ResultScene = (function (_super) {
     __extends(ResultScene, _super);
     function ResultScene(game, isClear, gameScene) {
         var _this = _super.call(this, {
-            game: game,
-            assetIds: ["clear", "gameover"]
+            game: game
         }) || this;
         _this.gameSprite = g.Util.createSpriteFromScene(_this, gameScene);
         _this.isClear = isClear;
@@ -28,7 +27,7 @@ var ResultScene = (function (_super) {
     };
     ResultScene.prototype.onLoaded = function () {
         var assetId = this.isClear ? "clear" : "gameover";
-        var asset = this.assets[assetId];
+        var asset = this.game.assets[assetId];
         this.append(this.gameSprite);
         new g.Sprite({
             scene: this,

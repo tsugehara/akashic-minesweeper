@@ -5,8 +5,11 @@ export class GameScene extends g.Scene {
 	gameStateChanged: g.Trigger<m.GameState>;
 	mineSweeper: m.MineSweeper;
 
-	constructor(param: g.SceneParameterObject, config?: m.GameConfig) {
-		super(param);
+	constructor(game: g.Game, config?: m.GameConfig) {
+		super({
+			game: game,
+			assetIds: ["open_cell", "close_cell"]
+		});
 		this.config = config ? config : {
 			width :10,
 			height: 10,
