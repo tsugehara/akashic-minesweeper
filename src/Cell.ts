@@ -19,7 +19,8 @@ export class CellView extends g.E {
 		this.openBg = param.openBg;
 		this.value = param.value;
 		this.isOpen = false;
-		const fontSize = this.height / 2 | 0;
+		// const fontSize = this.height / 2 | 0;
+		const fontSize = this.font.size;
 		this.label = new g.Label({
 			scene: this.scene,
 			x: 0,

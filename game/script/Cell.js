@@ -19,7 +19,8 @@ var CellView = (function (_super) {
         _this.openBg = param.openBg;
         _this.value = param.value;
         _this.isOpen = false;
-        var fontSize = _this.height / 2 | 0;
+        // const fontSize = this.height / 2 | 0;
+        var fontSize = _this.font.size;
         _this.label = new g.Label({
             scene: _this.scene,
             x: 0,
