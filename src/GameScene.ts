@@ -5,8 +5,11 @@ export class GameScene extends g.Scene {
 	gameStateChanged: g.Trigger<m.GameState>;
 	mineSweeper: m.MineSweeper;
 
-	constructor(param: g.SceneParameterObject, config?: m.GameConfig) {
-		super(param);
+	constructor(game: g.Game, config?: m.GameConfig) {
+		super({
+			game: game,
+			assetIds: ["open_cell", "close_cell", "number", "glyph"]
+		});
 		this.config = config ? config : {
 			width :10,
 			height: 10,
@@ -14,11 +17,17 @@ export class GameScene extends g.Scene {
 			seed: 0
 		};
 		this.gameStateChanged = new g.Trigger();
-		this.mineSweeper = new m.MineSweeper(config, this);
-		this.mineSweeper.gameStateChanged.handle(this, this.onGameStateChanged);
+		this.mineSweeper = null;
+		this.loaded.handle(this, this.onLoaded);
 	}
 
 	onGameStateChanged(state: m.GameState) {
 		this.gameStateChanged.fire(state);
+	}
+
+	onLoaded() {
+		this.mineSweeper = new m.MineSweeper(this.config, this);
+		this.mineSweeper.gameStateChanged.handle(this, this.onGameStateChanged);
+		return false;
 	}
 }

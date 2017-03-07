@@ -1,3 +1,4 @@
+// unuse
 export interface BorderRectParameterObject extends g.FilledRectParameterObject {
 	borderColor?: string;
 	borderWidth?: number;
