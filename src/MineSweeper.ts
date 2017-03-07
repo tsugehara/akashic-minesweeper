@@ -1,9 +1,6 @@
 import {BorderRect, BorderRectParameterObject} from "./BorderRect";
 import {CellView, CellViewParameterObject} from "./Cell";
 
-const gameFontSize = 24;
-const gameFont = new g.DynamicFont(g.FontFamily.SansSerif, gameFontSize, g.game);
-
 export enum GameState {
 	Play,
 	GameOver,
@@ -215,9 +212,18 @@ export class MineSweeper {
 	setupField(parent: g.E | g.Scene) {
 		const w = this.getWidth(parent) / this.field.length | 0;
 		const h = this.getHeight(parent) / this.field[0].length | 0;
+		const glyphData = JSON.parse((<g.TextAsset>this.scene.assets["glyph"]).data);
+		const font = new g.BitmapFont(
+			this.scene.assets["number"],
+			glyphData.map,
+			glyphData.width,
+			glyphData.height,
+			glyphData.missingGlyph
+		);
+
 		for (let x = 0; x < this.field.length; x++) {
 			for (let y = 0; y < this.field[x].length; y++) {
-				const view = new CellViewer(this.field[x][y], this.scene, x, y, w, h);
+				const view = new CellViewer(this.field[x][y], this.scene, font, x, y, w, h);
 				view.x = x * w;
 				view.y = y * h;
 				parent.append(view);
@@ -250,12 +256,13 @@ export class CellViewer extends g.E {
 	cell: Cell;
 	view: CellView;
 
-	constructor(cell: Cell, scene: g.Scene, x: number, y: number, width: number, height: number) {
+	constructor(cell: Cell, scene: g.Scene, font: g.Font, x: number, y: number, width: number, height: number) {
 		super({
 			scene: scene,
 			width: width,
 			height: height
 		});
+
 		this.cell = cell;
 		this.view = new CellView({
 			scene: scene,
@@ -263,7 +270,7 @@ export class CellViewer extends g.E {
 			y: 0,
 			width: width,
 			height: height,
-			font: gameFont,
+			font: font,
 			touchable: true,
 			openBg: (scene.assets["open_cell"] as g.ImageAsset).asSurface(),
 			closeBg: (scene.assets["close_cell"] as g.ImageAsset).asSurface(),

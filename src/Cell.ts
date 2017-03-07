@@ -23,7 +23,7 @@ export class CellView extends g.E {
 		this.label = new g.Label({
 			scene: this.scene,
 			x: 0,
-			y: (this.height / 2 - fontSize / 2) / 2 | 0,	// TODO: 謎数字すぎるので後で詰める
+			y: (this.height / 2 - fontSize / 2) | 0,	// TODO: 謎数字すぎるので後で詰める
 			width: this.width,
 			height: this.height,
 			font: this.font,

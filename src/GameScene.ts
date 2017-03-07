@@ -8,7 +8,7 @@ export class GameScene extends g.Scene {
 	constructor(game: g.Game, config?: m.GameConfig) {
 		super({
 			game: game,
-			assetIds: ["open_cell", "close_cell"]
+			assetIds: ["open_cell", "close_cell", "number", "glyph"]
 		});
 		this.config = config ? config : {
 			width :10,

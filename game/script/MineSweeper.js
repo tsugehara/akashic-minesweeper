@@ -11,8 +11,6 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var Cell_1 = require("./Cell");
-var gameFontSize = 24;
-var gameFont = new g.DynamicFont(g.FontFamily.SansSerif, gameFontSize, g.game);
 var GameState;
 (function (GameState) {
     GameState[GameState["Play"] = 0] = "Play";
@@ -192,9 +190,11 @@ var MineSweeper = (function () {
     MineSweeper.prototype.setupField = function (parent) {
         var w = this.getWidth(parent) / this.field.length | 0;
         var h = this.getHeight(parent) / this.field[0].length | 0;
+        var glyphData = JSON.parse(this.scene.assets["glyph"].data);
+        var font = new g.BitmapFont(this.scene.assets["number"], glyphData.map, glyphData.width, glyphData.height, glyphData.missingGlyph);
         for (var x = 0; x < this.field.length; x++) {
             for (var y = 0; y < this.field[x].length; y++) {
-                var view = new CellViewer(this.field[x][y], this.scene, x, y, w, h);
+                var view = new CellViewer(this.field[x][y], this.scene, font, x, y, w, h);
                 view.x = x * w;
                 view.y = y * h;
                 parent.append(view);
@@ -230,7 +230,7 @@ var MineSweeper = (function () {
 exports.MineSweeper = MineSweeper;
 var CellViewer = (function (_super) {
     __extends(CellViewer, _super);
-    function CellViewer(cell, scene, x, y, width, height) {
+    function CellViewer(cell, scene, font, x, y, width, height) {
         var _this = _super.call(this, {
             scene: scene,
             width: width,
@@ -243,7 +243,7 @@ var CellViewer = (function (_super) {
             y: 0,
             width: width,
             height: height,
-            font: gameFont,
+            font: font,
             touchable: true,
             openBg: scene.assets["open_cell"].asSurface(),
             closeBg: scene.assets["close_cell"].asSurface(),

@@ -23,7 +23,7 @@ var CellView = (function (_super) {
         _this.label = new g.Label({
             scene: _this.scene,
             x: 0,
-            y: (_this.height / 2 - fontSize / 2) / 2 | 0,
+            y: (_this.height / 2 - fontSize / 2) | 0,
             width: _this.width,
             height: _this.height,
             font: _this.font,

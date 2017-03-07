@@ -46,8 +46,7 @@
 		},
 		"glyph": {
 			"type": "text",
-			"path": "text/glyph.json",
-			"global": true
+			"path": "text/glyph.json"
 		},
 		"stage_glyph": {
 			"type": "text",
@@ -72,8 +71,7 @@
 			"type": "image",
 			"path": "image/number.png",
 			"width": 440,
-			"height": 34,
-			"global": true
+			"height": 34
 		},
 		"stage_number": {
 			"type": "image",

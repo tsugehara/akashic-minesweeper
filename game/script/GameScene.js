@@ -16,7 +16,7 @@ var GameScene = (function (_super) {
     function GameScene(game, config) {
         var _this = _super.call(this, {
             game: game,
-            assetIds: ["open_cell", "close_cell"]
+            assetIds: ["open_cell", "close_cell", "number", "glyph"]
         }) || this;
         _this.config = config ? config : {
             width: 10,
