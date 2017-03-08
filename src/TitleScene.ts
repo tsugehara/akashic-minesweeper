@@ -2,11 +2,12 @@ import {Spinner} from "./Spinner";
 import {GameScene} from "./GameScene";
 import {ResultScene} from "./ResultScene";
 import {GameState, GameConfig} from "./MineSweeper";
+import {Button} from "./Button";
 
 // なぜかこれがシーン遷移を全部知ってるクラスになってる
 export class TitleScene extends g.Scene {
 	font: g.Font;
-	start: g.E;
+	start: Button;
 	title: g.E;
 	spinner: Spinner;
 	config: GameConfig;
@@ -39,6 +40,7 @@ export class TitleScene extends g.Scene {
 
 	onLoaded() {
 		const startImage = <g.ImageAsset>this.assets["start"];
+		const startOnImage = (<g.ImageAsset>this.assets["start_on"]);
 		const titleImage = <g.ImageAsset>this.assets["title"];
 		this.title = new g.Sprite({
 			scene: this,
@@ -46,29 +48,32 @@ export class TitleScene extends g.Scene {
 			x: this.game.width / 2 - titleImage.width / 2,
 			y: this.game.height / 2 - titleImage.height / 2
 		});
-		this.start = new g.Sprite({
+		this.start = new Button({
 			scene: this,
-			src: startImage,
+			buttonImage: startImage.asSurface(),
+			pushedImage: startOnImage.asSurface(),
 			x: this.game.width / 2 - startImage.width / 2,
 			y: this.title.y + titleImage.height - 5 - startImage.height,
-			touchable: true
+			width: startImage.width,
+			height: startImage.height
 		});
-		this.start.pointDown.handle(this, this.onStarting);
-		this.start.pointUp.handle(this, this.onStart);
+		this.start.clicked.handle(this, this.onStart);
 		this.spinner = new Spinner({
 			scene: this,
 			font: this.font,
-			upSrc: this.game.assets["up"],
-			downSrc: this.game.assets["down"],
+			upButtonImage: (<g.ImageAsset>this.game.assets["triangle"]).asSurface(),
+			upPushedImage: (<g.ImageAsset>this.game.assets["triangle_on"]).asSurface(),
+			downButtonImage: (<g.ImageAsset>this.game.assets["triangle_reverse"]).asSurface(),
+			downPushedImage: (<g.ImageAsset>this.game.assets["triangle_reverse_on"]).asSurface(),
 			value: 0,
 			minValue: 0,
 			maxValue: 9,
-			x: this.game.width / 2 - (64 * 6 / 2),
-			y: 20
+			x: this.game.width / 2 - 50 / 2,
+			y: this.game.height / 2 - titleImage.height / 2 + 82
 		});
 		this.createBg();
-		this.append(this.spinner);
 		this.append(this.title);
+		this.append(this.spinner);
 		this.append(this.start);
 	}
 
@@ -88,11 +93,6 @@ export class TitleScene extends g.Scene {
 				});
 			}
 		}
-	}
-
-	onStarting() {
-		(<g.Sprite>this.start).surface = (<g.ImageAsset>this.assets["start_on"]).asSurface();
-		(<g.Sprite>this.start).invalidate();
 	}
 
 	onStart() {
