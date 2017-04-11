@@ -1,6 +1,6 @@
 {
-	"width": 816,
-	"height": 624,
+	"width": 790,
+	"height": 600,
 	"fps": 30,
 	"main": "./script/main.js",
 	"assets": {
@@ -29,6 +29,11 @@
 			"path": "script/GameScene.js",
 			"global": true
 		},
+		"Cell": {
+			"type": "script",
+			"path": "script/Cell.js",
+			"global": true
+		},
 		"ResultScene": {
 			"type": "script",
 			"path": "script/ResultScene.js",
@@ -41,47 +46,102 @@
 		},
 		"glyph": {
 			"type": "text",
-			"path": "text/glyph.json",
+			"path": "text/glyph.json"
+		},
+		"stage_glyph": {
+			"type": "text",
+			"path": "text/stage_glyph.json",
 			"global": true
 		},
-		"up": {
+		"triangle": {
 			"type": "image",
-			"path": "image/up.png",
-			"width": 64,
-			"height": 64,
+			"path": "image/triangle.png",
+			"width": 45,
+			"height": 42,
 			"global": true
 		},
-		"down": {
+		"triangle_on": {
 			"type": "image",
-			"path": "image/down.png",
-			"width": 64,
-			"height": 64,
+			"path": "image/triangle_on.png",
+			"width": 45,
+			"height": 42,
+			"global": true
+		},
+		"triangle_reverse": {
+			"type": "image",
+			"path": "image/triangle_reverse.png",
+			"width": 45,
+			"height": 42,
+			"global": true
+		},
+		"triangle_reverse_on": {
+			"type": "image",
+			"path": "image/triangle_reverse_on.png",
+			"width": 45,
+			"height": 42,
 			"global": true
 		},
 		"number": {
 			"type": "image",
 			"path": "image/number.png",
-			"width": 704,
-			"height": 64,
+			"width": 440,
+			"height": 34
+		},
+		"stage_number": {
+			"type": "image",
+			"path": "image/stage_number.png",
+			"width": 550,
+			"height": 62,
 			"global": true
 		},
 		"start": {
 			"type": "image",
 			"path": "image/start.png",
-			"width": 480,
-			"height": 200
+			"width": 330,
+			"height": 100
+		},
+		"start_on": {
+			"type": "image",
+			"path": "image/start_on.png",
+			"width": 330,
+			"height": 100
+		},
+		"title": {
+			"type": "image",
+			"path": "image/title.png",
+			"width": 466,
+			"height": 320
 		},
 		"clear": {
 			"type": "image",
 			"path": "image/clear.png",
-			"width": 256,
-			"height": 256
+			"width": 590,
+			"height": 390,
+			"global": true
 		},
 		"gameover": {
 			"type": "image",
 			"path": "image/gameover.png",
-			"width": 256,
-			"height": 256
+			"width": 590,
+			"height": 390,
+			"global": true
+		},
+		"open_cell": {
+			"type": "image",
+			"path": "image/open_cell.png",
+			"width": 80,
+			"height": 60
+		},
+		"close_cell": {
+			"type": "image",
+			"path": "image/close_cell.png",
+			"width": 80,
+			"height": 60
+		},
+		"Button": {
+			"type": "script",
+			"path": "script/Button.js",
+			"global": true
 		}
 	}
 }

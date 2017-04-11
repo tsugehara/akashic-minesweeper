@@ -7,7 +7,7 @@ var LocalTextAsset = (function (_super) {
     __extends(LocalTextAsset, _super);
     function LocalTextAsset(id, path) {
         _super.call(this, id, path);
-        this.data = window.gLocalAssetContainer[id];
+        this.data = decodeURIComponent(window.gLocalAssetContainer[id]);
     }
     LocalTextAsset.prototype._load = function (loader) {
         var _this = this;
