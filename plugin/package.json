@@ -1,0 +1,17 @@
+{
+  "name": "akashic-atsumaru-plugin",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "t.tsugehara",
+  "license": "MIT",
+  "devDependencies": {
+    "@akashic/akashic-engine": "^1.12.2",
+    "atsumaru-gameapi": "0.0.2",
+    "typescript": "^2.2.2"
+  }
+}
