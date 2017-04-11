@@ -14,6 +14,7 @@ var Spinner_1 = require("./Spinner");
 var GameScene_1 = require("./GameScene");
 var ResultScene_1 = require("./ResultScene");
 var MineSweeper_1 = require("./MineSweeper");
+var Button_1 = require("./Button");
 // なぜかこれがシーン遷移を全部知ってるクラスになってる
 var TitleScene = (function (_super) {
     __extends(TitleScene, _super);
@@ -37,6 +38,7 @@ var TitleScene = (function (_super) {
     }
     TitleScene.prototype.onLoaded = function () {
         var startImage = this.assets["start"];
+        var startOnImage = this.assets["start_on"];
         var titleImage = this.assets["title"];
         this.title = new g.Sprite({
             scene: this,
@@ -44,29 +46,32 @@ var TitleScene = (function (_super) {
             x: this.game.width / 2 - titleImage.width / 2,
             y: this.game.height / 2 - titleImage.height / 2
         });
-        this.start = new g.Sprite({
+        this.start = new Button_1.Button({
             scene: this,
-            src: startImage,
+            buttonImage: startImage.asSurface(),
+            pushedImage: startOnImage.asSurface(),
             x: this.game.width / 2 - startImage.width / 2,
             y: this.title.y + titleImage.height - 5 - startImage.height,
-            touchable: true
+            width: startImage.width,
+            height: startImage.height
         });
-        this.start.pointDown.handle(this, this.onStarting);
-        this.start.pointUp.handle(this, this.onStart);
+        this.start.clicked.handle(this, this.onStart);
         this.spinner = new Spinner_1.Spinner({
             scene: this,
             font: this.font,
-            upSrc: this.game.assets["up"],
-            downSrc: this.game.assets["down"],
+            upButtonImage: this.game.assets["triangle"].asSurface(),
+            upPushedImage: this.game.assets["triangle_on"].asSurface(),
+            downButtonImage: this.game.assets["triangle_reverse"].asSurface(),
+            downPushedImage: this.game.assets["triangle_reverse_on"].asSurface(),
             value: 0,
             minValue: 0,
             maxValue: 9,
-            x: this.game.width / 2 - (64 * 6 / 2),
-            y: 20
+            x: this.game.width / 2 - 50 / 2,
+            y: this.game.height / 2 - titleImage.height / 2 + 82
         });
         this.createBg();
-        this.append(this.spinner);
         this.append(this.title);
+        this.append(this.spinner);
         this.append(this.start);
     };
     TitleScene.prototype.createBg = function () {
@@ -85,10 +90,6 @@ var TitleScene = (function (_super) {
                 });
             }
         }
-    };
-    TitleScene.prototype.onStarting = function () {
-        this.start.surface = this.assets["start_on"].asSurface();
-        this.start.invalidate();
     };
     TitleScene.prototype.onStart = function () {
         var _this = this;

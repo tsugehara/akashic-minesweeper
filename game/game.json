@@ -53,18 +53,32 @@
 			"path": "text/stage_glyph.json",
 			"global": true
 		},
-		"up": {
+		"triangle": {
 			"type": "image",
-			"path": "image/up.png",
-			"width": 64,
-			"height": 64,
+			"path": "image/triangle.png",
+			"width": 45,
+			"height": 42,
 			"global": true
 		},
-		"down": {
+		"triangle_on": {
 			"type": "image",
-			"path": "image/down.png",
-			"width": 64,
-			"height": 64,
+			"path": "image/triangle_on.png",
+			"width": 45,
+			"height": 42,
+			"global": true
+		},
+		"triangle_reverse": {
+			"type": "image",
+			"path": "image/triangle_reverse.png",
+			"width": 45,
+			"height": 42,
+			"global": true
+		},
+		"triangle_reverse_on": {
+			"type": "image",
+			"path": "image/triangle_reverse_on.png",
+			"width": 45,
+			"height": 42,
 			"global": true
 		},
 		"number": {
@@ -123,6 +137,11 @@
 			"path": "image/close_cell.png",
 			"width": 80,
 			"height": 60
+		},
+		"Button": {
+			"type": "script",
+			"path": "script/Button.js",
+			"global": true
 		}
 	}
 }

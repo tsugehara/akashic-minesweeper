@@ -10,6 +10,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+var Button_1 = require("./Button");
 var Spinner = (function (_super) {
     __extends(Spinner, _super);
     function Spinner(param) {
@@ -21,35 +22,39 @@ var Spinner = (function (_super) {
         _this.value = param.value;
         // TODO: fontSize指定や型指定による自動レイアウト調整
         // TODO: このコードはfontSize = 64, 桁数4固定
-        _this.up = (param.up ? param.up : (param.upSrc ? new g.Sprite({
+        _this.up = new Button_1.Button({
             scene: _this.scene,
-            src: param.upSrc,
-            touchable: true,
-            x: 0,
-            y: 0
-        }) : null));
-        _this.down = (param.down ? param.down : (param.downSrc ? new g.Sprite({
+            buttonImage: param.upButtonImage,
+            pushedImage: param.upPushedImage,
+            x: -80,
+            y: 23,
+            width: param.upButtonImage.width,
+            height: param.upButtonImage.height
+        });
+        _this.down = new Button_1.Button({
             scene: _this.scene,
-            src: param.downSrc,
-            touchable: true,
-            x: 384,
-            y: 0
-        }) : null));
+            buttonImage: param.downButtonImage,
+            pushedImage: param.downPushedImage,
+            x: 88,
+            y: 23,
+            width: param.downButtonImage.width,
+            height: param.downButtonImage.height
+        });
         _this.font = param.font ? param.font : null;
         _this.text = param.text ? param.text : new g.Label({
             scene: _this.scene,
             font: _this.font,
-            fontSize: 64,
+            fontSize: _this.font.size,
             text: "" + _this.value,
             textAlign: g.TextAlign.Center,
             widthAutoAdjust: false,
-            width: 64 * 4,
-            height: 64,
-            x: 64,
+            width: 50,
+            height: 62,
+            x: 0,
             y: 0
         });
-        _this.up.pointDown.handle(_this, _this.onUp);
-        _this.down.pointDown.handle(_this, _this.onDown);
+        _this.up.clicked.handle(_this, _this.onUp);
+        _this.down.clicked.handle(_this, _this.onDown);
         _this.append(_this.text);
         _this.append(_this.up);
         _this.append(_this.down);

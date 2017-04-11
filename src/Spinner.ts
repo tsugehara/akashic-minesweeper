@@ -1,3 +1,5 @@
+import {Button} from "./Button";
+
 export interface CancellableEvent<T> {
 	cancel?: boolean;
 	target: g.E;
@@ -5,10 +7,10 @@ export interface CancellableEvent<T> {
 }
 
 export interface SpinnerParameterObject extends g.EParameterObject {
-	up?: g.E;
-	down?: g.E;
-	upSrc?: g.Asset | g.Surface;
-	downSrc?: g.Asset | g.Surface;
+	upButtonImage: g.Surface;
+	upPushedImage: g.Surface;
+	downButtonImage: g.Surface;
+	downPushedImage: g.Surface;
 	text?: g.Label;
 	font?: g.Font;
 	minValue?: number;
@@ -17,8 +19,8 @@ export interface SpinnerParameterObject extends g.EParameterObject {
 }
 
 export class Spinner extends g.E {
-	up: g.E;
-	down: g.E;
+	up: Button;
+	down: Button;
 	text: g.Label;
 	font: g.Font;
 	valueChanging: g.Trigger<CancellableEvent<number>>;
@@ -36,35 +38,39 @@ export class Spinner extends g.E {
 		this.value = param.value;
 		// TODO: fontSize指定や型指定による自動レイアウト調整
 		// TODO: このコードはfontSize = 64, 桁数4固定
-		this.up = (param.up ? param.up : (param.upSrc ? new g.Sprite({
+		this.up = new Button({
 			scene: this.scene,
-			src: param.upSrc,
-			touchable: true,
-			x: 0,
-			y: 0
-		}) : null));
-		this.down = (param.down ? param.down : (param.downSrc ? new g.Sprite({
+			buttonImage: param.upButtonImage,
+			pushedImage: param.upPushedImage,
+			x: -80,
+			y: 23,
+			width: param.upButtonImage.width,
+			height: param.upButtonImage.height
+		});
+		this.down = new Button({
 			scene: this.scene,
-			src: param.downSrc,
-			touchable: true,
-			x: 384,
-			y: 0
-		}) : null));
+			buttonImage: param.downButtonImage,
+			pushedImage: param.downPushedImage,
+			x: 88,
+			y: 23,
+			width: param.downButtonImage.width,
+			height: param.downButtonImage.height
+		});
 		this.font = param.font ? param.font : null;
 		this.text = param.text ? param.text : new g.Label({
 			scene: this.scene,
 			font: this.font,
-			fontSize: 64,
+			fontSize: this.font.size,
 			text: "" + this.value,
 			textAlign: g.TextAlign.Center,
 			widthAutoAdjust: false,
-			width: 64 * 4,
-			height: 64,
-			x: 64,
+			width: 50,
+			height: 62,
+			x: 0,
 			y: 0
 		});
-		this.up.pointDown.handle(this, this.onUp);
-		this.down.pointDown.handle(this, this.onDown);
+		this.up.clicked.handle(this, this.onUp);
+		this.down.clicked.handle(this, this.onDown);
 		this.append(this.text);
 		this.append(this.up);
 		this.append(this.down);

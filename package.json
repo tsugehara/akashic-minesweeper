@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "prepublish": "npm run install:typings",
-    "build": "gulp build && cd game && akashic update asset script",
+    "build": "gulp build && cd game && akashic scan asset script",
     "install:typings": "typings install",
     "lint": "gulp lint",
     "start": "npm run build && akashic-sandbox game",
