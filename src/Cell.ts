@@ -43,7 +43,7 @@ export class CellView extends g.E {
 
 	open() {
 		this.isOpen = true;
-		if (this.value > 0) {
+		if (this.value > 0 && ! this.label.parent) {
 			this.append(this.label);
 		}
 		this.modified();
