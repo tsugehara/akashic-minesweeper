@@ -28,6 +28,26 @@ window.addEventListener("load", function() {
 				return readKeys.map(function (k, i) { return { readKey: k, values: svs[i] }; });
 			}
 		});
+// -----------ここからアツマール用の特殊コード--------------
+var startPoints = [
+	{
+		data: {
+			seed: Date.now()
+		},
+		frame: 0
+	}
+];
+var tickList = [
+	0,
+	0,
+	[]
+];
+amflowClient = new gdr.ReplayAmflowProxy({
+	amflow: amflowClient,
+	tickList: tickList,
+	startPoints: startPoints
+});
+// -----------ここまで--------------
 
 		var pf = new pdiBrowser.Platform({
 			amflow: amflowClient,
@@ -76,5 +96,17 @@ window.addEventListener("load", function() {
 			}
 			driver.startGame();
 		});
+// -----------ここからアツマール用の特殊コード--------------
+window.sandboxDeveloperProps = {
+	game: null,
+	driver: driver,
+	amflow: amflowClient,
+	gameStorage: storage,
+	gameId: sandboxGameId,
+	path: gamePath,
+	gdr: gdr,
+	sandboxPlayer: sandboxPlayer
+};
+// -----------ここまで--------------
 	}
 });
