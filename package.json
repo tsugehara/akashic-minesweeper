@@ -1,5 +1,5 @@
 {
-  "name": "typescript-game-sample",
+  "name": "akashic-minesweeper",
   "version": "0.0.0",
   "description": "",
   "main": "index.js",
@@ -9,11 +9,11 @@
     "install:typings": "typings install",
     "lint": "gulp lint",
     "start": "npm run build && akashic-sandbox game",
-    "export": "rm -rf html && cd game && akashic export html --output ../html",
+    "export": "rm -rf html && cd game && akashic export html --output ../html && rm -f ../html/image/.gitkeep",
     "test": "gulp test lint"
   },
-  "author": "",
-  "license": "",
+  "author": "t.tsugehara",
+  "license": "MIT",
   "files": [
     "bin",
     "lib",
