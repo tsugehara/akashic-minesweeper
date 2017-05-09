@@ -30,6 +30,7 @@
     "gulp-shell": "~0.5.2",
     "gulp-tslint": "4.3.5",
     "gulp-util": "^3.0.7",
+    "htmlparser2": "^3.9.2",
     "jasmine": "~2.1.1",
     "jasmine-reporters": "~2.0.4",
     "jasmine-terminal-reporter": "~0.9.1",
