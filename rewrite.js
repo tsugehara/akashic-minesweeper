@@ -79,8 +79,8 @@ function rewriteHtml(path, scripts) {
 	});
 }
 function copyFile(src, dist) {
-	const r = fs.createReadStream(src, {encoding: "utf8"});
-	const w = fs.createWriteStream(dist, {encoding: "utf8"});
+	const r = fs.createReadStream(src);
+	const w = fs.createWriteStream(dist);
 	return new Promise((resolve, reject) => {
 		r.on("error", (err) => {
 			reject(err);
@@ -123,6 +123,7 @@ createDirectory(path.join("html", "img"))
 	.then(copyDirectory(path.join("template", "page"), path.join("html", "page")))
 	.then(copyDirectory(path.join("template", "css"), path.join("html", "css")))
 	.then(copyFile(path.join("template", "index.html"), path.join("html", "index.html")))
+	.then(copyDirectory(path.join("template", "js"), path.join("html", "js")))
 	.then(() => {
 		console.log("finished");
 	});

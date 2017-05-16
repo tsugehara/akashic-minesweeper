@@ -44,7 +44,7 @@ body{
 	height:130px;
 	margin-left:50px;
 	background-color:transparent;
-	background-image:url(../image/save_btn.png);
+	background-image:url(../page/save_btn.png);
 }
 
 #btn_load{
@@ -52,15 +52,15 @@ body{
 	height:130px;
 	margin-left:80px;
 	background-color:transparent;
-	background-image:url(../image/load_btn.png);
+	background-image:url(../page/load_btn.png);
 }
 
 #btn_save:hover{
-	background-image:url(../image/save_btn_on.png);
+	background-image:url(../page/save_btn_on.png);
 }
 
 #btn_load:hover{
-	background-image:url(../image/load_btn_on.png);
+	background-image:url(../page/load_btn_on.png);
 }
 
 #btn_save:focus {
