@@ -1,1 +1,0 @@
-window.g = require("@akashic/akashic-engine");
