@@ -2247,7 +2247,6 @@ require = function e(t, n, r) {
                             if (code) {
                                 var glyph = this.font.glyphForCharacter(code);
                                 if (!glyph) {
-                                    return;
                                     var str = 4294901760 & code ? String.fromCharCode((4294901760 & code) >>> 16, 65535 & code) : String.fromCharCode(code);
                                     throw g.ExceptionFactory.createAssertionError("Label#_invalidateSelf(): failed to get a glyph for '" + str + "' (BitmapFont might not have the glyph or DynamicFont might create a glyph larger than its atlas).");
                                 }

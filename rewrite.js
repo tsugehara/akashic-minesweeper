@@ -55,8 +55,10 @@ function readFile(path) {
 function createJs(path, script) {
 	return new Promise((resolve, reject) => {
 		console.log(path);
-		resolve(path);
-		// TODO: implement fs.writeFile here
+		fs.writeFile(path, script, () => {
+			console.log(path);
+			resolve(path);
+		});
 	});
 }
 function createJsFiles(dir, scripts) {
@@ -76,14 +78,52 @@ function rewriteHtml(path, scripts) {
 		resolve(scripts);
 	});
 }
+function copyFile(src, dist) {
+	const r = fs.createReadStream(src);
+	const w = fs.createWriteStream(dist);
+	return new Promise((resolve, reject) => {
+		r.on("error", (err) => {
+			reject(err);
+		});
+		w.on("error", (err) => {
+			reject(err);
+		});
+		w.on("close", () => {
+			resolve();
+		});
+		r.pipe(w);
+	});
+}
+function copyDirectory(src, dist) {
+	return new Promise((resolve, reject) => {
+		fs.readdir(src, (err, files) => {
+			Promise.all(files.map((f) => copyFile(path.join(src, f), path.join(dist, f))))
+				.then(resolve)
+				.catch(reject);
+		});
+	});
+}
+function createDirectory(path) {
+	return new Promise((resolve, reject) => {
+		fs.mkdir(path, (err) => {
+			// 存在チェックするよりこのエラー無視しちゃう
+			// if (err) {
+			// 	reject(err)
+			// 	return;
+			// }
+			resolve();
+		})
+	});
+}
 var basePath = "html";
 var htmlFile = path.join(basePath, "index.html");
-readFile(htmlFile).then((data) => {
-	return getScripts(data);
-}).then((scripts) => {
-	return createJsFiles(basePath, scripts);
-}).then((scripts) => {
-	return rewriteHtml(htmlFile, scripts);
-}).then(() => {
-	console.log("finished.");
-});
+
+createDirectory(path.join("html", "img"))
+	.then(createDirectory(path.join("html", "page")))
+	.then(copyDirectory(path.join("template", "page"), path.join("html", "page")))
+	.then(copyDirectory(path.join("template", "css"), path.join("html", "css")))
+	.then(copyFile(path.join("template", "index.html"), path.join("html", "index.html")))
+	.then(copyDirectory(path.join("template", "js"), path.join("html", "js")))
+	.then(() => {
+		console.log("finished");
+	});
