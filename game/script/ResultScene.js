@@ -12,7 +12,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var ResultScene = (function (_super) {
     __extends(ResultScene, _super);
-    function ResultScene(game, isClear, gameScene) {
+    function ResultScene(game, isClear, gameScene, seed) {
         var _this = _super.call(this, {
             game: game
         }) || this;
@@ -20,6 +20,7 @@ var ResultScene = (function (_super) {
         _this.isClear = isClear;
         _this.pointDownCapture.handle(_this, _this.onPointDownCapture);
         _this.loaded.handle(_this, _this.onLoaded);
+        _this.seed = seed;
         return _this;
     }
     ResultScene.prototype.onPointDownCapture = function () {
@@ -38,6 +39,14 @@ var ResultScene = (function (_super) {
             src: asset,
             parent: this
         });
+        if (this.game.external.atsumaru) {
+            if (this.isClear) {
+                this.game.external.atsumaru.comment.resetAndChangeScene("clear" + this.seed);
+            }
+            else {
+                this.game.external.atsumaru.comment.resetAndChangeScene("gameover" + this.seed);
+            }
+        }
     };
     return ResultScene;
 }(g.Scene));

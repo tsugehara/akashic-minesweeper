@@ -71,10 +71,15 @@ export class TitleScene extends g.Scene {
 			x: this.game.width / 2 - 50 / 2,
 			y: this.game.height / 2 - titleImage.height / 2 + 82
 		});
+		this.spinner.valueChanged.handle(this, this.onSpinnerValueChanged);
 		this.createBg();
 		this.append(this.title);
 		this.append(this.spinner);
 		this.append(this.start);
+
+		if (this.game.external.atsumaru) {
+			(<AtsumaruGameAPI>this.game.external.atsumaru).comment.resetAndChangeScene("title");
+		}
 	}
 
 	createBg() {
@@ -103,11 +108,28 @@ export class TitleScene extends g.Scene {
 				const resultScene = new ResultScene(
 					this.game,
 					state === GameState.GameClear,
-					gameScene
+					gameScene,
+					this.config.seed
 				);
 				this.game.replaceScene(resultScene);
 			}
 		});
 		this.game.pushScene(gameScene);
+		// TODO: popSceneでの再表示はこれしかないのかな？
+		this.game._sceneChanged.handle((scene: g.Scene) => {
+			if (scene === this) {
+				if (this.game.external.atsumaru) {
+					(<AtsumaruGameAPI>this.game.external.atsumaru).comment.resetAndChangeScene("title");
+				}
+				return false;
+			}
+		});
+	}
+
+	onSpinnerValueChanged(value: number) {
+		if (this.game.external.atsumaru) {
+			(<AtsumaruGameAPI>this.game.external.atsumaru).comment.pushContextFactor("" + value);
+		}
+		this.config.seed = value;
 	}
 }

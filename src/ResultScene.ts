@@ -2,7 +2,9 @@ import {GameScene} from "./GameScene";
 export class ResultScene extends g.Scene {
 	isClear: boolean;
 	gameSprite: g.Sprite;
-	constructor(game: g.Game, isClear: boolean, gameScene: GameScene) {
+	seed: number;
+
+	constructor(game: g.Game, isClear: boolean, gameScene: GameScene, seed: number) {
 		super({
 			game: game
 		});
@@ -10,6 +12,7 @@ export class ResultScene extends g.Scene {
 		this.isClear = isClear;
 		this.pointDownCapture.handle(this, this.onPointDownCapture);
 		this.loaded.handle(this, this.onLoaded);
+		this.seed = seed;
 	}
 
 	onPointDownCapture() {
@@ -29,5 +32,13 @@ export class ResultScene extends g.Scene {
 			src: asset,
 			parent: this
 		});
+
+		if (this.game.external.atsumaru) {
+			if (this.isClear) {
+				(<AtsumaruGameAPI>this.game.external.atsumaru).comment.resetAndChangeScene("clear" + this.seed);
+			} else {
+				(<AtsumaruGameAPI>this.game.external.atsumaru).comment.resetAndChangeScene("gameover" + this.seed);
+			}
+		}
 	}
 }

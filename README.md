@@ -41,3 +41,31 @@ npm test
 # TypeScriptライブラリ利用時の注意
 
 ゲームにTypeScriptライブラリを利用する場合、このディレクトリで `npm install --save package_name` を実行した後、game/以下で `akashic-cli install package_name` する必要があります。
+
+## テスト方法
+
+`npm i` は2回目以降省略可能。
+
+プラグインを更新するなら以下の手順を実行してから、ブラウザで `http://localhost:3000` にアクセス。
+
+```sh
+npm i
+cd plugin
+npm i
+npm run deploy
+cd ..
+npm start
+```
+
+HTMLで見るなら以下の手順を実行してから、html以下のHTMLを開く（htmlフォルダ内のファイルはまとめて消えて再作成される点に注意）。
+
+```sh
+npm i
+npm run build
+cd plugin
+npm i
+npm run deploy
+cd ..
+npm run export
+```
+

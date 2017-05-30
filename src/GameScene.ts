@@ -28,6 +28,9 @@ export class GameScene extends g.Scene {
 	onLoaded() {
 		this.mineSweeper = new m.MineSweeper(this.config, this);
 		this.mineSweeper.gameStateChanged.handle(this, this.onGameStateChanged);
+		if (this.game.external.atsumaru) {
+			(<AtsumaruGameAPI>this.game.external.atsumaru).comment.resetAndChangeScene("game" + this.config.seed);
+		}
 		return false;
 	}
 }
