@@ -9,7 +9,7 @@
     "install:typings": "typings install",
     "lint": "gulp lint",
     "start": "npm run build && akashic-sandbox game",
-    "export": "rm -rf html && cd game && akashic export html --output ../html && rm -f ../html/image/.gitkeep",
+    "export": "rm -rf html && cd game && akashic export html --output ../html && cd .. && rm -f html/image/.gitkeep && cd plugin && npm run deploy && cd .. && node rewrite.js",
     "test": "gulp test lint"
   },
   "author": "t.tsugehara",

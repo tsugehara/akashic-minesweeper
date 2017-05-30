@@ -70,10 +70,14 @@ var TitleScene = (function (_super) {
             x: this.game.width / 2 - 50 / 2,
             y: this.game.height / 2 - titleImage.height / 2 + 82
         });
+        this.spinner.valueChanged.handle(this, this.onSpinnerValueChanged);
         this.createBg();
         this.append(this.title);
         this.append(this.spinner);
         this.append(this.start);
+        if (this.game.external.atsumaru) {
+            this.game.external.atsumaru.comment.resetAndChangeScene("title");
+        }
     };
     TitleScene.prototype.createBg = function () {
         var w = this.game.width / this.config.width | 0;
@@ -98,11 +102,26 @@ var TitleScene = (function (_super) {
         var gameScene = new GameScene_1.GameScene(this.game, this.config);
         gameScene.gameStateChanged.handle(function (state) {
             if (state === MineSweeper_1.GameState.GameClear || state === MineSweeper_1.GameState.GameOver) {
-                var resultScene = new ResultScene_1.ResultScene(_this.game, state === MineSweeper_1.GameState.GameClear, gameScene);
+                var resultScene = new ResultScene_1.ResultScene(_this.game, state === MineSweeper_1.GameState.GameClear, gameScene, _this.config.seed);
                 _this.game.replaceScene(resultScene);
             }
         });
         this.game.pushScene(gameScene);
+        // TODO: popSceneでの再表示はこれしかないのかな？
+        this.game._sceneChanged.handle(function (scene) {
+            if (scene === _this) {
+                if (_this.game.external.atsumaru) {
+                    _this.game.external.atsumaru.comment.resetAndChangeScene("title");
+                }
+                return false;
+            }
+        });
+    };
+    TitleScene.prototype.onSpinnerValueChanged = function (value) {
+        if (this.game.external.atsumaru) {
+            this.game.external.atsumaru.comment.pushContextFactor("" + value);
+        }
+        this.config.seed = value;
     };
     return TitleScene;
 }(g.Scene));

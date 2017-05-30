@@ -35,6 +35,9 @@ var GameScene = (function (_super) {
     GameScene.prototype.onLoaded = function () {
         this.mineSweeper = new m.MineSweeper(this.config, this);
         this.mineSweeper.gameStateChanged.handle(this, this.onGameStateChanged);
+        if (this.game.external.atsumaru) {
+            this.game.external.atsumaru.comment.resetAndChangeScene("game" + this.config.seed);
+        }
         return false;
     };
     return GameScene;
