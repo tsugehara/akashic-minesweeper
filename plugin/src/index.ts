@@ -39,7 +39,14 @@ export class AtsumaruPlugin {
 
 export class StorageAPI extends AtsumaruAPI {
 	saveCurrentPlaylog(slotId: string) {
-		// TODO
+		// 動かない・・
+		const dump = this.amflow.dump();
+		const jsonData = {
+			tickList: dump.tickList,
+			startPoints: dump.staratPoints,
+			fps: this.game.fps
+		};
+		return this.save(slotId, jsonData);
 	}
 
 	loadPlaylog(slotId: string) {
