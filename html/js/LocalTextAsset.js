@@ -6,8 +6,9 @@ var __extends = (this && this.__extends) || function (d, b) {
 var LocalTextAsset = (function (_super) {
     __extends(LocalTextAsset, _super);
     function LocalTextAsset(id, path) {
-        _super.call(this, id, path);
-        this.data = decodeURIComponent(window.gLocalAssetContainer[id]);
+        var _this = _super.call(this, id, path) || this;
+        _this.data = decodeURIComponent(window.gLocalAssetContainer[id]);
+        return _this;
     }
     LocalTextAsset.prototype._load = function (loader) {
         var _this = this;
@@ -23,4 +24,4 @@ var LocalTextAsset = (function (_super) {
         }
     };
     return LocalTextAsset;
-})(g.TextAsset);
+}(g.TextAsset));
