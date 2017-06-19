@@ -21,13 +21,16 @@ window.addEventListener("load", function() {
 					game.external.atsumaru.storage.saveCurrentPlaylog("1");
 				} else {
 					var dump = window.sandboxDeveloperProps.amflow.dump();
+					window.localStorage.setItem("1", JSON.stringify(dump));
 				}
 			});
 		}
 		if (loadButton) {
-			saveButton.addEventListener("click", function() {
+			loadButton.addEventListener("click", function() {
 				if (window.RPGAtsumaru) {
 					game.external.atsumaru.storage.loadPlaylog("1");
+				} else {
+					var dump = window.localStorage.getItem("1");
 				}
 			});
 		}

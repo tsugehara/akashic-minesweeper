@@ -37,6 +37,7 @@ export class AtsumaruPlugin {
 
 }
 
+declare var console: any;
 export class StorageAPI extends AtsumaruAPI {
 	saveCurrentPlaylog(slotId: string) {
 		// 動かない・・
@@ -50,7 +51,9 @@ export class StorageAPI extends AtsumaruAPI {
 	}
 
 	loadPlaylog(slotId: string) {
-		// TODO
+		this.load(slotId).then((value) => {
+			console.log(value);
+		});
 	}
 
 	listPlaylog() {
