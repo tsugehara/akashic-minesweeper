@@ -6,8 +6,9 @@ var __extends = (this && this.__extends) || function (d, b) {
 var LocalScriptAsset = (function (_super) {
     __extends(LocalScriptAsset, _super);
     function LocalScriptAsset(id, path) {
-        _super.call(this, id, path);
-        this.func = window.gLocalAssetContainer[id]; // gLocalScriptContainer は index.ect 上のscriptタグ内で宣言されている 
+        var _this = _super.call(this, id, path) || this;
+        _this.func = window.gLocalAssetContainer[id]; // gLocalScriptContainer は index.ect 上のscriptタグ内で宣言されている 
+        return _this;
     }
     LocalScriptAsset.prototype._load = function (loader) {
         var _this = this;
@@ -27,4 +28,4 @@ var LocalScriptAsset = (function (_super) {
         return execEnv.module.exports;
     };
     return LocalScriptAsset;
-})(g.ScriptAsset);
+}(g.ScriptAsset));
