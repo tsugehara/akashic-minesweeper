@@ -21,6 +21,7 @@ window.addEventListener("load", function() {
 				if (window.RPGAtsumaru) {
 					game.external.atsumaru.storage.saveCurrentPlaylog("1");
 				} else {
+					// これはこれでよさげ。アツマールに保存するだけでよさそう
 					var dump = window.sandboxDeveloperProps.amflow.dump();
 					window.localStorage.setItem("1", JSON.stringify(dump));
 				}
@@ -32,19 +33,42 @@ window.addEventListener("load", function() {
 				if (window.RPGAtsumaru) {
 					game.external.atsumaru.storage.loadPlaylog("1");
 				} else {
+					// ここをどう書けばリプレーモードになってくれるのかの確認が必要
 					var dump = window.localStorage.getItem("1");
 					var playlog = JSON.parse(dump);
 					window.sandboxDeveloperProps.amflow._tickList = playlog.tickList;
 					window.sandboxDeveloperProps.amflow._startPoints = playlog.startPoints;
-					driver.stopGame();
+					game.requestNotifyAgePassed(playlog.tickList[1]);
+					game.agePassedTrigger.handle(function(age) {
+						driver.changeState({
+							driverConfiguration: {
+								executionMode: window.sandboxDeveloperProps.gdr.ExecutionMode.Active,
+								playToken: window.sandboxDeveloperProps.gdr.MemoryAmflowClient.TOKEN_ACTIVE
+							},
+							loopConfiguration: {
+								playbackRate: 1,
+								loopMode: window.sandboxDeveloperProps.gdr.LoopMode.Realtime,
+								delayIgnoreThreshold: 6,
+								jumpTryThreshold: 90000
+							}
+						}, function (err) {
+							if (err) {
+								console.log(err);
+								return;
+							}
+							driver.setNextAge(playlog.tickList[1] + 1);
+							driver.startGame();
+						});
+					});
 					driver.changeState({
 						driverConfiguration: {
-							executionMode: window.sandboxDeveloperProps.gdr.ExecutionMode.PASSIVE,
+							executionMode: window.sandboxDeveloperProps.gdr.ExecutionMode.Passive,
 							playToken: window.sandboxDeveloperProps.gdr.MemoryAmflowClient.TOKEN_PASSIVE
 						},
 						loopConfiguration: {
-							playbackRate: 1,  // 実行速度もリセットしておく
+							playbackRate: playlog.tickList[1] > 1000 ? 20 : 5,  // 実行速度は後で考える
 							loopMode: window.sandboxDeveloperProps.gdr.LoopMode.Replay,
+							targetAge: 0,
 							delayIgnoreThreshold: Number.MAX_VALUE,  // Ugh! GameLoopがデフォルト値にリセットする方法を提供するべき
 							jumpTryThreshold: Number.MAX_VALUE
 						}
@@ -53,8 +77,6 @@ window.addEventListener("load", function() {
 							console.log(err);
 							return;
 						}
-						// driver.setNextAge(props.game.age);
-						driver.startGame();
 					});
 				}
 			});
