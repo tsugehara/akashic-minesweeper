@@ -2,28 +2,27 @@
 window.addEventListener("load", function() {
 	window.sandboxDeveloperProps.driver.gameCreatedTrigger.handle(function(game) {
 		window.sandboxDeveloperProps.game = game;
+		var saveButton = document.getElementById("btn_save");
+		var loadButton = document.getElementById("btn_load");
 		if (window.RPGAtsumaru) {
 			var plugin = require("./lib/index");
 			plugin.init({
 				atsumaru: window.RPGAtsumaru,
 				game: window.sandboxDeveloperProps.game,
-				gameDriver: window.sandboxDeveloperProps.gameDriver,
+				gameDriver: window.sandboxDeveloperProps.driver,
 				amflow: window.sandboxDeveloperProps.amflow,
 				gdr: window.sandboxDeveloperProps.gdr
 			});
 		}
 
-		// TODO: ここに書くのやら？
-		var saveButton = document.getElementById("btn_save");
-		var loadButton = document.getElementById("btn_load");
+		// TODO: ちょっと不細工だけどいったんデバッグ用に
 		if (saveButton) {
 			saveButton.addEventListener("click", function() {
 				if (window.RPGAtsumaru) {
 					game.external.atsumaru.storage.saveCurrentPlaylog("1");
 				} else {
-					// これはこれでよさげ。アツマールに保存するだけでよさそう
-					var dump = window.sandboxDeveloperProps.amflow.dump();
-					window.localStorage.setItem("1", JSON.stringify(dump));
+					// ただのデバッグ用
+					console.log("save playlog", window.sandboxDeveloperProps.amflow.dump());
 				}
 			});
 		}
@@ -33,51 +32,8 @@ window.addEventListener("load", function() {
 				if (window.RPGAtsumaru) {
 					game.external.atsumaru.storage.loadPlaylog("1");
 				} else {
-					// ここをどう書けばリプレーモードになってくれるのかの確認が必要
-					var dump = window.localStorage.getItem("1");
-					var playlog = JSON.parse(dump);
-					window.sandboxDeveloperProps.amflow._tickList = playlog.tickList;
-					window.sandboxDeveloperProps.amflow._startPoints = playlog.startPoints;
-					game.requestNotifyAgePassed(playlog.tickList[1]);
-					game.agePassedTrigger.handle(function(age) {
-						driver.changeState({
-							driverConfiguration: {
-								executionMode: window.sandboxDeveloperProps.gdr.ExecutionMode.Active,
-								playToken: window.sandboxDeveloperProps.gdr.MemoryAmflowClient.TOKEN_ACTIVE
-							},
-							loopConfiguration: {
-								playbackRate: 1,
-								loopMode: window.sandboxDeveloperProps.gdr.LoopMode.Realtime,
-								delayIgnoreThreshold: 6,
-								jumpTryThreshold: 90000
-							}
-						}, function (err) {
-							if (err) {
-								console.log(err);
-								return;
-							}
-							driver.setNextAge(playlog.tickList[1] + 1);
-							driver.startGame();
-						});
-					});
-					driver.changeState({
-						driverConfiguration: {
-							executionMode: window.sandboxDeveloperProps.gdr.ExecutionMode.Passive,
-							playToken: window.sandboxDeveloperProps.gdr.MemoryAmflowClient.TOKEN_PASSIVE
-						},
-						loopConfiguration: {
-							playbackRate: playlog.tickList[1] > 1000 ? 20 : 5,  // 実行速度は後で考える
-							loopMode: window.sandboxDeveloperProps.gdr.LoopMode.Replay,
-							targetAge: 0,
-							delayIgnoreThreshold: Number.MAX_VALUE,  // Ugh! GameLoopがデフォルト値にリセットする方法を提供するべき
-							jumpTryThreshold: Number.MAX_VALUE
-						}
-					}, function (err) {
-						if (err) {
-							console.log(err);
-							return;
-						}
-					});
+					// ただのデバッグ用
+					console.log("load playlog");
 				}
 			});
 		}
@@ -130,16 +86,56 @@ var StorageAPI = (function (_super) {
     StorageAPI.prototype.saveCurrentPlaylog = function (slotId) {
         // 動かない・・
         var dump = this.amflow.dump();
-        var jsonData = {
-            tickList: dump.tickList,
-            startPoints: dump.staratPoints,
-            fps: this.game.fps
-        };
-        return this.save(slotId, jsonData);
+        return this.save(slotId, JSON.stringify(dump));
     };
     StorageAPI.prototype.loadPlaylog = function (slotId) {
+        var _this = this;
         this.load(slotId).then(function (value) {
-            console.log(value);
+            var playlog = JSON.parse(value);
+            _this.amflow._tickList = playlog.tickList;
+            _this.amflow._startPoints = playlog.startPoints;
+            // 非公開I/Fのようなので強引に飛ばす
+            _this.game.requestNotifyAgePassed(playlog.tickList[1]);
+            _this.game.agePassedTrigger.handle(function (age) {
+                _this.gameDriver.changeState({
+                    driverConfiguration: {
+                        executionMode: _this.gdr.ExecutionMode.Active,
+                        playToken: _this.gdr.MemoryAmflowClient.TOKEN_ACTIVE
+                    },
+                    loopConfiguration: {
+                        playbackRate: 1,
+                        loopMode: _this.gdr.LoopMode.Realtime,
+                        delayIgnoreThreshold: 6,
+                        jumpTryThreshold: 90000
+                    }
+                }, function (err) {
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
+                    _this.gameDriver.setNextAge(playlog.tickList[1] + 1);
+                    _this.gameDriver.startGame();
+                });
+                return false;
+            });
+            _this.gameDriver.changeState({
+                driverConfiguration: {
+                    executionMode: _this.gdr.ExecutionMode.Passive,
+                    playToken: _this.gdr.MemoryAmflowClient.TOKEN_PASSIVE
+                },
+                loopConfiguration: {
+                    playbackRate: playlog.tickList[1] > 1000 ? 20 : 5,
+                    loopMode: _this.gdr.LoopMode.Replay,
+                    targetAge: 0,
+                    delayIgnoreThreshold: Number.MAX_VALUE,
+                    jumpTryThreshold: Number.MAX_VALUE
+                }
+            }, function (err) {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+            });
         });
     };
     StorageAPI.prototype.listPlaylog = function () {
