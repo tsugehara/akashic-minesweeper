@@ -42,17 +42,56 @@ export class StorageAPI extends AtsumaruAPI {
 	saveCurrentPlaylog(slotId: string) {
 		// 動かない・・
 		const dump = this.amflow.dump();
-		const jsonData = {
-			tickList: dump.tickList,
-			startPoints: dump.staratPoints,
-			fps: this.game.fps
-		};
-		return this.save(slotId, jsonData);
+		return this.save(slotId, JSON.stringify(dump));
 	}
 
 	loadPlaylog(slotId: string) {
 		this.load(slotId).then((value) => {
-			console.log(value);
+			const playlog = JSON.parse(value);
+			this.amflow._tickList = playlog.tickList;
+			this.amflow._startPoints = playlog.startPoints;
+			// 非公開I/Fのようなので強引に飛ばす
+			(<any>this.game).requestNotifyAgePassed(playlog.tickList[1]);
+			(<any>this.game).agePassedTrigger.handle((age: number) => {
+				this.gameDriver.changeState({
+					driverConfiguration: {
+						executionMode: this.gdr.ExecutionMode.Active,
+						playToken: this.gdr.MemoryAmflowClient.TOKEN_ACTIVE
+					},
+					loopConfiguration: {
+						playbackRate: 1,
+						loopMode: this.gdr.LoopMode.Realtime,
+						delayIgnoreThreshold: 6,
+						jumpTryThreshold: 90000
+					}
+				}, (err: any) => {
+					if (err) {
+						console.log(err);
+						return;
+					}
+					this.gameDriver.setNextAge(playlog.tickList[1] + 1);
+					this.gameDriver.startGame();
+				});
+				return false;
+			});
+			this.gameDriver.changeState({
+				driverConfiguration: {
+					executionMode: this.gdr.ExecutionMode.Passive,
+					playToken: this.gdr.MemoryAmflowClient.TOKEN_PASSIVE
+				},
+				loopConfiguration: {
+					playbackRate: playlog.tickList[1] > 1000 ? 20 : 5,	// 実行速度適当
+					loopMode: this.gdr.LoopMode.Replay,
+					targetAge: 0,
+					delayIgnoreThreshold: Number.MAX_VALUE,
+					jumpTryThreshold: Number.MAX_VALUE
+				}
+			}, (err: any) => {
+				if (err) {
+					console.log(err);
+					return;
+				}
+			});
 		});
 	}
 
