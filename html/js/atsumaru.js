@@ -5,7 +5,7 @@ window.addEventListener("load", function() {
 		var saveButton = document.getElementById("btn_save");
 		var loadButton = document.getElementById("btn_load");
 		if (window.RPGAtsumaru) {
-			var plugin = require("./lib/index");
+			var plugin = require("akashic-atsumaru-plugin");
 			plugin.init({
 				atsumaru: window.RPGAtsumaru,
 				game: window.sandboxDeveloperProps.game,
@@ -41,7 +41,7 @@ window.addEventListener("load", function() {
 	});
 });
 
-},{"./lib/index":2}],2:[function(require,module,exports){
+},{"akashic-atsumaru-plugin":2}],2:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -216,4 +216,4 @@ exports.CommentAPI = CommentAPI;
 // 	}
 // }
 
-},{}]},{},[1,2]);
+},{}]},{},[1]);

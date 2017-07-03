@@ -9,7 +9,7 @@
     "install:typings": "typings install",
     "lint": "gulp lint",
     "start": "npm run build && akashic-sandbox game",
-    "export": "rm -rf html && cd game && akashic export html --output ../html && cd .. && rm -f html/image/.gitkeep && cd plugin && npm run deploy && cd .. && node rewrite.js",
+    "export": "rm -rf html && cd game && akashic export html --output ../html && cd .. && akashic-atsumaru-template",
     "test": "gulp test lint"
   },
   "author": "t.tsugehara",
@@ -23,6 +23,8 @@
     "@akashic/akashic-cli": "^1.1.2",
     "@akashic/akashic-engine": "^1.12.2",
     "@akashic/akashic-sandbox": "^0.12.2",
+    "akashic-atsumaru-template": "^0.1.4",
+    "atsumaru-gameapi": "0.0.2",
     "del": "^1.1.1",
     "gulp": "~3.9.1",
     "gulp-istanbul": "~0.10.4",
@@ -37,5 +39,6 @@
     "tslint": "^3.10.2",
     "typescript": "^2.1.5",
     "typings": "1.0.4"
-  }
+  },
+  "dependencies": {}
 }

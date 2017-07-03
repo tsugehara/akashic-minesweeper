@@ -9,8 +9,7 @@
   "files": [
     "node_modules/@akashic/akashic-engine/lib/main.d.ts",
     "typings/index.d.ts",
-    "plugin/node_modules/atsumaru-gameapi/build/index.d.ts",
-    "plugin/lib/index.d.ts"
+    "node_modules/atsumaru-gameapi/build/index.d.ts"
   ],
   "include": [
     "src/**/*.ts"
