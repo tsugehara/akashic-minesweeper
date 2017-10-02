@@ -23,7 +23,7 @@
     "@akashic/akashic-cli": "^1.1.2",
     "@akashic/akashic-engine": "^1.12.2",
     "@akashic/akashic-sandbox": "^0.12.2",
-    "akashic-atsumaru-template": "^0.1.4",
+    "akashic-atsumaru-template": "^0.3.2",
     "atsumaru-gameapi": "0.0.2",
     "del": "^1.1.1",
     "gulp": "~3.9.1",
